@@ -1,5 +1,49 @@
 {
-  "project": "Test1",
+  "project": "mis-pagos",
   "stack": "android",
-  "features": []
+  "features": [
+    {
+      "id": 1,
+      "name": "payments_list",
+      "title": "Lista de pagos con estados de UI",
+      "description": "Mostrar los pagos del crédito desde el backend fake (~1.5 s, 30% de fallos) con estados cargando, error con Reintentar, vacío y contenido.",
+      "acceptance": [
+        "Cada pago muestra monto formateado en MXN, fecha límite y estado",
+        "Al abrir se muestra cargando; si falla, error con botón Reintentar que vuelve a pedir",
+        "Lista vacía muestra estado vacío",
+        "Un estado desconocido (EN_PROCESO u otro) no rompe el parseo ni la pantalla",
+        "Montos con BigDecimal; la fecha límite se muestra como fecha de calendario (30 nov 2026)"
+      ],
+      "sdd": true,
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "name": "pay_payment",
+      "title": "Pagar sin duplicar",
+      "description": "Botón Pagar en pagos pagables; pay() tarda 2–5 s y puede dar timeout aunque el servidor haya cobrado. Un pago nunca se duplica.",
+      "acceptance": [
+        "Solo los pagos pagables muestran Pagar",
+        "Doble tap o tap repetido mientras está en curso no genera un segundo cobro",
+        "Tras un timeout, el reintento usa la misma llave de idempotencia y el servidor cobra una sola vez",
+        "Tras un timeout, el pago queda en Verificando hasta conciliar; al confirmar pasa a PAGADO",
+        "Un test con el fake demuestra que el servidor registró exactamente un cobro"
+      ],
+      "sdd": true,
+      "status": "pending"
+    },
+    {
+      "id": 3,
+      "name": "offline_last_known",
+      "title": "Último dato bueno sin conexión (stretch)",
+      "description": "Si getPayments falla y hay un dato bueno guardado, mostrarlo con la leyenda 'Actualizado hace X min'.",
+      "acceptance": [
+        "Con caché y fallo de red se muestra la lista guardada con 'Actualizado hace X min'",
+        "Sin caché y con fallo se muestra el estado de error",
+        "El reloj es inyectable para testear X min"
+      ],
+      "sdd": true,
+      "status": "pending"
+    }
+  ]
 }

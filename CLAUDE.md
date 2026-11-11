@@ -5,7 +5,11 @@ hacen el resultado verificable y repetible.
 
 ## Producto
 
-_Pendiente: se llena con `/kickoff` (detalle en `docs/product.md`)._
+Pantalla **"Mis pagos"** de una fintech de créditos: lista de pagos (monto, fecha
+límite y estado) y botón "Pagar". Es dinero real: montos exactos (`BigDecimal`,
+nunca `Double`), fechas tratadas como fecha de calendario, y **un pago nunca se
+duplica**. El backend es un fake con latencia, fallos aleatorios y timeouts que a
+veces sí cobran. Detalle y preguntas abiertas en `docs/product.md`.
 
 ## Cómo se trabaja
 
