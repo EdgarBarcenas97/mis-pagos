@@ -1,0 +1,126 @@
+<title>Mis pagos · mockup v1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: grid of phone frames, one per screen state, grouped by feature. */
+:root{
+  --page:#eef1f4; --ink:#1a1f24; --muted:#5b6470; --line:#d5dbe1;
+  --surface:#fbfcfd; --card:#ffffff; --primary:#0b5cad; --on-primary:#fff;
+  --ok:#1b7a43; --ok-bg:#dcf3e4; --warn:#9a5b00; --warn-bg:#fdeccf;
+  --bad:#b3261e; --bad-bg:#fbe1de; --info:#5a4a9c; --info-bg:#e8e2fb;
+  --neutral-bg:#e3eaf3; --frame:#1d232a; --scrim:rgba(10,14,18,.45); --snack:#2c3238; --on-snack:#f1f3f5;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:Roboto,system-ui,sans-serif; --mono:"Roboto Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0f1317; --ink:#e4e8ec; --muted:#9aa4af; --line:#2b333b;
+  --surface:#151a1f; --card:#1d242b; --primary:#9ecaff; --on-primary:#00315c;
+  --ok:#7fd8a0; --ok-bg:#16351f; --warn:#f5c26b; --warn-bg:#3a2a0c; --bad:#ffb4ab; --bad-bg:#47110d; --info:#cbbefc; --info-bg:#2d2550;
+  --neutral-bg:#253140; --frame:#000; --scrim:rgba(0,0,0,.6); --snack:#e4e8ec; --on-snack:#1a1f24; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#0f1317; --ink:#e4e8ec; --muted:#9aa4af; --line:#2b333b;
+  --surface:#151a1f; --card:#1d242b; --primary:#9ecaff; --on-primary:#00315c;
+  --ok:#7fd8a0; --ok-bg:#16351f; --warn:#f5c26b; --warn-bg:#3a2a0c; --bad:#ffb4ab; --bad-bg:#47110d; --info:#cbbefc; --info-bg:#2d2550;
+  --neutral-bg:#253140; --frame:#000; --scrim:rgba(0,0,0,.6); --snack:#e4e8ec; --on-snack:#1a1f24; color-scheme:dark}
+body{background:var(--page);color:var(--ink);font-family:var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px}
+header.page{max-width:1180px;margin:0 auto 28px;display:grid;gap:8px}
+header.page h1{font-family:var(--display);font-size:2rem;margin:0;text-wrap:balance}
+header.page p{margin:0;color:var(--muted);max-width:68ch;line-height:1.5}
+section.group{max-width:1180px;margin:0 auto 40px}
+section.group h2{font-family:var(--display);font-size:1.15rem;margin:0 0 4px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+section.group h2 code{font-family:var(--mono);font-size:.8rem;color:var(--primary);background:var(--neutral-bg);padding:2px 8px;border-radius:6px}
+section.group .note{color:var(--muted);margin:0 0 16px;font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
+figure{margin:0;display:grid;gap:10px;justify-items:center}
+figcaption{font-size:.85rem;color:var(--muted);text-align:center}
+figcaption b{color:var(--ink);font-weight:500;display:block}
+.phone{width:260px;max-width:100%;aspect-ratio:9/18.5;background:var(--frame);border-radius:34px;padding:9px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.screen{position:relative;height:100%;background:var(--surface);border-radius:26px;overflow:hidden;display:flex;flex-direction:column;font-size:12px}
+.status{height:22px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.appbar{padding:8px 16px 10px}
+.appbar .t{font-size:18px;font-weight:500}
+.appbar .s{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.list{flex:1;overflow:hidden;padding:4px 12px 12px;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center}
+.amt{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.amt small{font-weight:400;font-size:10px;color:var(--muted);margin-left:3px}
+.due{grid-column:1;font-size:11px;color:var(--muted)}
+.chip{justify-self:end;font-size:10px;font-weight:500;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.c-pend{background:var(--neutral-bg);color:var(--primary)} .c-venc{background:var(--bad-bg);color:var(--bad)}
+.c-pag{background:var(--ok-bg);color:var(--ok)} .c-proc{background:var(--info-bg);color:var(--info)}
+.act{grid-column:1/-1;display:flex;justify-content:flex-end;margin-top:4px}
+.btn{font:500 11px var(--body);border:0;border-radius:18px;padding:7px 16px;background:var(--primary);color:var(--on-primary);display:inline-flex;gap:6px;align-items:center}
+.btn.dis{opacity:.45}
+.btn.text{background:transparent;color:var(--primary);padding:7px 10px}
+.verif{grid-column:1/-1;margin-top:4px;padding:8px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-size:10.5px;line-height:1.35}
+.verif b{display:block;font-size:11px}
+.spin{width:11px;height:11px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:r 1s linear infinite}
+.spin.big{width:30px;height:30px;border-width:3px;color:var(--primary)}
+@keyframes r{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-size:13px;line-height:1.45}
+.banner{margin:0 12px 6px;padding:7px 10px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-size:10.5px;font-weight:500}
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+.dialog{background:var(--card);border-radius:22px;padding:18px;display:grid;gap:10px;width:100%}
+.dialog .h{font-size:16px;font-weight:500}
+.dialog p{margin:0;color:var(--muted);line-height:1.45}
+.dialog .row{display:flex;justify-content:flex-end;gap:4px}
+.snack{position:absolute;left:12px;right:12px;bottom:14px;background:var(--snack);color:var(--on-snack);border-radius:6px;padding:10px 12px;font-size:11px}
+.tag{font-family:var(--mono);font-size:9px;color:var(--muted)}
+</style>
+
+<header class="page">
+  <h1>Mis pagos · pantallas v1</h1>
+  <p>Una pantalla, todos sus estados. Los datos son los del backend simulado (crédito CR-88213). Montos en MXN con formato es-MX; la fecha límite se muestra como fecha de calendario. Debajo de cada marco va la feature de <code>feature_list.json</code> que lo cubre.</p>
+</header>
+
+<section class="group">
+  <h2>Estados de pantalla <code>payments_list</code></h2>
+  <p class="note">Cargando y error reutilizan StateViews del design system. Orden por fecha límite ascendente.</p>
+  <div class="grid" id="g1"></div>
+</section>
+<section class="group">
+  <h2>Pagar sin duplicar <code>pay_payment</code></h2>
+  <p class="note">Confirmación con monto, botón bloqueado mientras procesa y "Verificando" tras un timeout: nunca un "reintenta" que invite a pagar dos veces.</p>
+  <div class="grid" id="g2"></div>
+</section>
+<section class="group">
+  <h2>Sin conexión <code>offline_last_known</code> · stretch</h2>
+  <p class="note">Último dato bueno con su antigüedad. Pagar queda desactivado hasta recuperar conexión.</p>
+  <div class="grid" id="g3"></div>
+</section>
+
+<script>
+const P=[
+ {id:"p3",amt:"1,250.10",due:"Venció el 30 sep 2026",st:"pag"},
+ {id:"p2",amt:"1,250.10",due:"Vence el 31 oct 2026",st:"venc"},
+ {id:"p1",amt:"1,250.10",due:"Vence el 30 nov 2026",st:"pend"},
+ {id:"p4",amt:"980.55",due:"Vence el 31 dic 2026",st:"proc"}];
+const L={pend:"Pendiente",venc:"Vencido",pag:"Pagado",proc:"En proceso"};
+const chrome=(body,extra="")=>`<div class="phone"><div class="screen"><div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+<div class="appbar"><div class="t">Mis pagos</div><div class="s">Crédito CR-88213</div></div>${body}${extra}</div></div>`;
+function card(p,o={}){
+  const st=o.st||p.st, pay=(st==="pend"||st==="venc");
+  let act="";
+  if(o.verif) act=`<div class="verif"><b>Verificando tu pago…</b>No vuelvas a pagar; te avisaremos en cuanto se confirme.</div>`;
+  else if(pay) act=`<div class="act">${o.busy?`<span class="btn dis"><span class="spin"></span>Procesando…</span>`:`<span class="btn${o.off?" dis":""}">Pagar</span>`}</div>`;
+  return `<div class="card"><div class="amt">$${p.amt}<small>MXN</small></div><span class="chip c-${st}">${L[st]}</span><div class="due">${p.due}</div>${act}</div>`;
+}
+const list=(o={})=>`<div class="list">${P.map(p=>card(p,o[p.id]||(o.all||{}))).join("")}</div>`;
+const fig=(cap,sub,html)=>`<figure>${html}<figcaption><b>${cap}</b>${sub}</figcaption></figure>`;
+document.getElementById("g1").innerHTML=[
+ fig("Cargando","~1.5 s · state_loading",chrome(`<div class="center"><span class="spin big" aria-label="Cargando"></span></div>`)),
+ fig("Error","30% de las veces · state_error / state_retry",chrome(`<div class="center">No pudimos cargar tus pagos. Revisa tu conexión e inténtalo de nuevo.<span class="btn">Reintentar</span></div>`)),
+ fig("Vacío","state_empty",chrome(`<div class="center">Aún no tienes pagos programados para este crédito.</div>`)),
+ fig("Contenido","payments_list · EN_PROCESO sin botón",chrome(list())),
+].join("");
+document.getElementById("g2").innerHTML=[
+ fig("Confirmar pago","pay_confirm / pay_cancel",chrome(list(),`<div class="scrim"><div class="dialog"><div class="h">Confirmar pago</div><p>Vas a pagar $1,250.10 MXN de la cuota que vence el 30 nov 2026.</p><div class="row"><span class="btn text">Cancelar</span><span class="btn">Pagar $1,250.10</span></div></div></div>`)),
+ fig("Procesando","2–5 s · botón bloqueado, sin doble cobro",chrome(list({p1:{busy:true}}))),
+ fig("Verificando","tras timeout · payment_verifying_p1",chrome(list({p1:{verif:true}}))),
+ fig("Pago registrado","el chip pasa a Pagado + snackbar",chrome(list({p1:{st:"pag"}}),`<div class="snack">Pago registrado.</div>`)),
+ fig("Rechazado","error definitivo · el botón vuelve",chrome(list(),`<div class="snack">No se pudo procesar el pago y no se hizo ningún cargo.</div>`)),
+].join("");
+document.getElementById("g3").innerHTML=[
+ fig("Último dato bueno","last_updated_banner",chrome(`<div class="banner">Sin conexión · Actualizado hace 12 min</div>`+list({all:{off:true}}))),
+].join("");
+</script>
