@@ -1,0 +1,28 @@
+# Config del harness para Android. La leen los hooks y scripts (se copia a .harness/config).
+# Patrones = globs de `case` sobre rutas relativas a la raíz del repo.
+
+HARNESS_STACK="android"
+
+# Todo lo que cuenta como código (bloqueado en fases spec y review)
+CODE_PATTERNS="app/* build.gradle.kts settings.gradle.kts gradle/* gradle.properties"
+# Tests (congelados en fases contract e impl)
+TEST_PATTERNS="*/src/test/* */src/androidTest/*"
+# Producción (prohibida para el tester)
+PROD_PATTERNS="*/src/main/*"
+
+# Lint por archivo al editar (si el binario no está instalado, se omite)
+LINT_EXTENSIONS="kt kts"
+LINT_CMD="ktlint --relative"
+
+# Comandos que mencionen esto se bloquean
+SECRET_REGEX='(\.env([^a-zA-Z]|$)|keystore\.properties|\.jks|\.keystore)'
+
+# Chequeos de entorno propios del stack (los llama init.sh)
+harness_check_env() {
+  need java "brew install --cask temurin@21"
+  local sdk="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
+  if [ -d "$sdk/platforms" ]; then ok "Android SDK ($sdk)"; else fail "falta Android SDK → instala Android Studio"; fi
+  if command -v adb > /dev/null 2>&1 || [ -x "$sdk/platform-tools/adb" ]; then ok "adb"; else fail "falta adb → SDK platform-tools"; fi
+  command -v ktlint > /dev/null 2>&1 && ok "ktlint (lint al editar)" || warn "sin ktlint: no habrá lint al editar → brew install ktlint"
+  command -v npx > /dev/null 2>&1 && ok "npx (MCP del emulador)" || warn "sin npx: no habrá MCP del emulador → brew install node"
+}

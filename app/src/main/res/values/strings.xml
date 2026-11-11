@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppBase</string>
+    <string name="home_title">Inicio</string>
+    <string name="state_empty">No hay nada que mostrar todavía.</string>
+    <string name="state_retry">Reintentar</string>
+    <string name="state_loading">Cargando</string>
+    <string name="error_network">Sin conexión. Revisa tu red.</string>
+    <string name="error_server">El servidor tuvo un problema.</string>
+    <string name="error_not_found">No encontramos lo que buscabas.</string>
+    <string name="error_unknown">Algo salió mal.</string>
+</resources>

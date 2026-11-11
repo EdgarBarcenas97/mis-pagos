@@ -1,0 +1,372 @@
+<title>Spec __FEATURE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: hoja de revisión de una spec. Primero lo que hay que decidir, luego el detalle; barra de veredicto fija abajo. */
+:root {
+  --page: #F3F5F4;
+  --surface: #FFFFFF;
+  --ink: #17201C;
+  --muted: #5A6661;
+  --rule: #D6DDDA;
+  --accent: #1F6F5C;
+  --on-accent: #FFFFFF;
+  --accent-soft: #DCEFE8;
+  --warn: #8A4B00;
+  --warn-soft: #FFEFD9;
+  --ok: #1F6F5C;
+  --bad: #B3261E;
+  --bad-soft: #FBE4E2;
+  --chip: #E6ECE9;
+  --f-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0E1412; --surface: #161D1A; --ink: #DCE4E0; --muted: #9AA8A2; --rule: #2A3430;
+    --accent: #8AD5BE; --on-accent: #00382D; --accent-soft: #173A31; --warn: #FFC27A; --warn-soft: #3A2A12;
+    --ok: #8AD5BE; --bad: #FFB4AB; --bad-soft: #3D1F1C; --chip: #1F2825; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0E1412; --surface: #161D1A; --ink: #DCE4E0; --muted: #9AA8A2; --rule: #2A3430;
+  --accent: #8AD5BE; --on-accent: #00382D; --accent-soft: #173A31; --warn: #FFC27A; --warn-soft: #3A2A12;
+  --ok: #8AD5BE; --bad: #FFB4AB; --bad-soft: #3D1F1C; --chip: #1F2825; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--page); color: var(--ink); font: 15px/1.55 var(--f-ui); margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 32px 140px; display: flex; flex-direction: column; gap: 36px; }
+code, .mono { font-family: var(--f-mono); font-size: .88em; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 18px; margin: 0; font-weight: 600; }
+.eyebrow { font: 500 12px/1.4 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 13px; margin-top: 10px; }
+.meta a { color: var(--accent); }
+.lede { margin: 12px 0 0; max-width: 68ch; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.count { font: 500 12px var(--f-mono); color: var(--muted); }
+
+/* Decisiones */
+.decision { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.decision.answered { border-color: var(--accent); }
+.d-head { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; }
+.d-title { font-weight: 600; font-size: 16px; }
+.d-ctx { margin: 0; color: var(--muted); max-width: 70ch; }
+.state-pill { font: 500 11px var(--f-mono); padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); white-space: nowrap; }
+.answered .state-pill { background: var(--accent-soft); color: var(--accent); }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.opt:hover { border-color: var(--muted); }
+.opt input { margin: 3px 0 0; accent-color: var(--accent); width: 16px; height: 16px; }
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.opt-label { font-weight: 500; }
+.rec { font: 500 11px var(--f-mono); color: var(--accent); margin-left: 6px; }
+.opt-detail { display: block; color: var(--muted); font-size: 14px; }
+textarea { width: 100%; min-height: 64px; resize: vertical; font: 14px/1.5 var(--f-ui); color: var(--ink); background: var(--page); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+label.small { font-size: 13px; color: var(--muted); }
+
+/* Requisitos */
+.reqs { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.req { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--rule); }
+.req:first-child { border-top: 0; }
+.req-id { font: 600 13px var(--f-mono); color: var(--accent); padding-top: 1px; }
+.req-group { font: 500 11px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 10px 16px 4px; background: var(--page); border-top: 1px solid var(--rule); }
+.req-group:first-child { border-top: 0; }
+.kw { font-weight: 600; }
+
+.change { background: var(--warn-soft); color: var(--ink); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.change b { color: var(--warn); }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+.covers { font-family: var(--f-mono); font-size: 12px; white-space: nowrap; }
+
+/* Veredicto */
+.verdict { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-shadow: 0 -6px 18px rgba(0,0,0,.06); }
+.v-in { max-width: 920px; margin: 0 auto; padding-block: 12px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+.v-status { font-size: 14px; color: var(--muted); min-width: 0; flex: 1 1 260px; }
+.v-status b { color: var(--ink); }
+.v-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: 500 14px var(--f-ui); border-radius: 999px; padding: 9px 18px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+button.primary[disabled] { opacity: .45; cursor: not-allowed; }
+button.danger { color: var(--bad); border-color: var(--bad); }
+.v-done { padding: 12px 16px; border-radius: 10px; font-size: 14px; }
+.v-done.ok { background: var(--accent-soft); color: var(--ink); }
+.v-done.changes { background: var(--bad-soft); color: var(--ink); }
+.fallback { background: var(--surface); border: 1px dashed var(--rule); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.fallback pre { margin: 0; white-space: pre-wrap; font: 12.5px/1.5 var(--f-mono); max-height: 220px; overflow: auto; }
+</style>
+
+<script id="spec-data" type="application/json">__SPEC_JSON__</script>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <div class="meta" id="meta"></div>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <section id="sec-decisions" aria-labelledby="h-dec">
+    <div class="sec-head"><h2 id="h-dec">Decisiones para ti</h2><span class="count" id="dec-count"></span></div>
+    <div id="decisions" class="opts" style="gap:14px"></div>
+  </section>
+
+  <section id="sec-changes" aria-labelledby="h-chg" hidden>
+    <div class="sec-head"><h2 id="h-chg">Cambios al diseño aprobado</h2></div>
+    <div id="changes" class="opts"></div>
+  </section>
+
+  <section aria-labelledby="h-req">
+    <div class="sec-head"><h2 id="h-req">Requisitos</h2><span class="count" id="req-count"></span></div>
+    <div class="reqs" id="reqs"></div>
+  </section>
+
+  <section aria-labelledby="h-tests">
+    <div class="sec-head"><h2 id="h-tests">Tests que se escribirán primero</h2></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Qué prueba</th><th>Cubre</th></tr></thead><tbody id="tests"></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="h-out">
+    <div class="sec-head"><h2 id="h-out">Fuera de alcance</h2></div>
+    <ul class="plain" id="out"></ul>
+  </section>
+
+  <section id="sec-fallback" hidden>
+    <div class="fallback">
+      <b>Tus respuestas no se pueden guardar desde aquí.</b>
+      <span>Copia este texto y pégalo en la conversación con Claude.</span>
+      <pre id="fallback-text"></pre>
+      <div><button type="button" id="copy">Copiar respuesta</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="verdict" role="region" aria-label="Veredicto">
+  <div class="v-in" id="verdict"></div>
+</div>
+
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById('spec-data').textContent);
+  var KEY = 'reviews/' + D.feature + '-r' + D.round;
+  var state = { decisions: {}, verdict: null, note: '' };
+  var db = null, ref = null, canWrite = true, saving = false, pending = null;
+
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === 'text') n.textContent = attrs[k];
+      else if (k === 'class') n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function earsText(t) {
+    var frag = document.createDocumentFragment();
+    t.split(/(\bCUANDO\b|\bMIENTRAS\b|\bSI\b|\bENTONCES\b|\bDONDE\b|\bDEBE\b)/).forEach(function (p) {
+      if (/^(CUANDO|MIENTRAS|SI|ENTONCES|DONDE|DEBE)$/.test(p)) frag.appendChild(el('span', { class: 'kw', text: p }));
+      else frag.appendChild(document.createTextNode(p));
+    });
+    return frag;
+  }
+
+  // Cabecera
+  document.getElementById('eyebrow').textContent = 'Spec · ronda ' + D.round + ' · ' + D.status;
+  document.getElementById('title').textContent = D.title;
+  document.getElementById('lede').textContent = D.summary;
+  var meta = document.getElementById('meta');
+  meta.appendChild(el('span', { class: 'mono', text: D.feature }));
+  meta.appendChild(el('span', { text: 'rama ' + D.branch }));
+  meta.appendChild(el('span', { text: 'commit ' + D.commit }));
+  meta.appendChild(el('span', { text: D.specPath }));
+  if (D.mockupUrl) meta.appendChild(el('a', { href: D.mockupUrl, target: '_blank', rel: 'noopener', text: 'Ver mockup' }));
+
+  // Decisiones
+  var decBox = document.getElementById('decisions');
+  D.decisions.forEach(function (d) {
+    var card = el('div', { class: 'decision', id: 'dec-' + d.id });
+    var pill = el('span', { class: 'state-pill', text: 'sin responder' });
+    card.appendChild(el('div', { class: 'd-head' }, [el('span', { class: 'd-title', text: d.title }), pill]));
+    card.appendChild(el('p', { class: 'd-ctx', text: d.context }));
+    var opts = el('div', { class: 'opts', role: 'radiogroup', 'aria-label': d.title });
+    d.options.forEach(function (o) {
+      var input = el('input', { type: 'radio', name: 'd-' + d.id, value: o.id, id: 'd-' + d.id + '-' + o.id });
+      input.addEventListener('change', function () { choose(d.id, o.id); });
+      var label = el('label', { class: 'opt', for: input.id }, [
+        input,
+        el('span', null, [
+          el('span', { class: 'opt-label', text: o.label }),
+          o.recommended ? el('span', { class: 'rec', text: 'recomendado' }) : null,
+          el('span', { class: 'opt-detail', text: o.detail })
+        ])
+      ]);
+      opts.appendChild(label);
+    });
+    card.appendChild(opts);
+    var ta = el('textarea', { id: 'note-' + d.id, placeholder: 'Comentario opcional', 'aria-label': 'Comentario sobre ' + d.title });
+    ta.addEventListener('input', function () { setNote(d.id, ta.value); });
+    card.appendChild(ta);
+    decBox.appendChild(card);
+  });
+  document.getElementById('dec-count').textContent = D.decisions.length + ' decisiones';
+
+  // Cambios de diseño
+  if (D.designChanges && D.designChanges.length) {
+    document.getElementById('sec-changes').hidden = false;
+    var ch = document.getElementById('changes');
+    D.designChanges.forEach(function (c) {
+      ch.appendChild(el('div', { class: 'change' }, [el('b', { text: c.title }), el('span', { text: c.detail })]));
+    });
+  }
+
+  // Requisitos
+  var reqs = document.getElementById('reqs'), lastGroup = null;
+  D.requirements.forEach(function (r) {
+    if (r.group && r.group !== lastGroup) { reqs.appendChild(el('div', { class: 'req-group', text: r.group })); lastGroup = r.group; }
+    var p = el('div', null); p.appendChild(earsText(r.text));
+    reqs.appendChild(el('div', { class: 'req' }, [el('span', { class: 'req-id', text: r.id }), p]));
+  });
+  document.getElementById('req-count').textContent = D.requirements.length + ' requisitos';
+
+  var tb = document.getElementById('tests');
+  D.tests.forEach(function (t) {
+    tb.appendChild(el('tr', null, [el('td', { text: t.type }), el('td', { text: t.what }), el('td', { class: 'covers', text: t.covers })]));
+  });
+  var out = document.getElementById('out');
+  D.outOfScope.forEach(function (o) { out.appendChild(el('li', { text: o })); });
+
+  // Estado y guardado
+  function answeredCount() { return D.decisions.filter(function (d) { return state.decisions[d.id] && state.decisions[d.id].choice; }).length; }
+  function syncDecisionsUI() {
+    D.decisions.forEach(function (d) {
+      var s = state.decisions[d.id] || {};
+      var card = document.getElementById('dec-' + d.id);
+      card.classList.toggle('answered', !!s.choice);
+      card.querySelector('.state-pill').textContent = s.choice ? 'respondida' : 'sin responder';
+      d.options.forEach(function (o) {
+        var i = document.getElementById('d-' + d.id + '-' + o.id);
+        i.checked = s.choice === o.id; i.disabled = !canWrite || !!state.verdict;
+      });
+      var ta = document.getElementById('note-' + d.id);
+      if (document.activeElement !== ta) ta.value = s.note || '';
+      ta.disabled = !canWrite || !!state.verdict;
+    });
+  }
+  function choose(id, opt) { state.decisions[id] = Object.assign({}, state.decisions[id], { choice: opt }); save(); render(); }
+  var noteTimer = null;
+  function setNote(id, v) {
+    state.decisions[id] = Object.assign({}, state.decisions[id], { note: v });
+    clearTimeout(noteTimer); noteTimer = setTimeout(save, 700); renderFallback();
+  }
+  function save() {
+    renderFallback();
+    if (!ref || !canWrite) return;
+    var body = JSON.parse(JSON.stringify(state)); body.updatedAt = new Date().toISOString(); body.round = D.round;
+    if (saving) { pending = body; return; }
+    saving = true;
+    ref.set(body).catch(function (e) {
+      if (e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked')) { canWrite = false; showFallback(); render(); }
+    }).then(function () {
+      saving = false;
+      if (pending) { var p = pending; pending = null; saving = true; ref.set(p).then(function () { saving = false; }, function () { saving = false; }); }
+    });
+  }
+  function answerText() {
+    var lines = ['Spec ' + D.feature + ' (ronda ' + D.round + ')'];
+    D.decisions.forEach(function (d) {
+      var s = state.decisions[d.id] || {};
+      var o = d.options.filter(function (x) { return x.id === s.choice; })[0];
+      lines.push('- ' + d.title + ': ' + (o ? o.label : 'sin responder') + (s.note ? ' — ' + s.note : ''));
+    });
+    lines.push('Veredicto: ' + (state.verdict || 'pendiente') + (state.note ? ' — ' + state.note : ''));
+    return lines.join('\n');
+  }
+  function renderFallback() { document.getElementById('fallback-text').textContent = answerText(); }
+  function showFallback() { document.getElementById('sec-fallback').hidden = false; renderFallback(); }
+  document.getElementById('copy').addEventListener('click', function () {
+    var t = answerText(), pre = document.getElementById('fallback-text');
+    try {
+      navigator.clipboard.writeText(t).then(function () { document.getElementById('copy').textContent = 'Copiado'; }, function () { selectPre(pre); });
+    } catch (e) { selectPre(pre); }
+  });
+  function selectPre(pre) { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+  function render() {
+    syncDecisionsUI();
+    var v = document.getElementById('verdict'); v.textContent = '';
+    var n = answeredCount(), total = D.decisions.length;
+    if (state.verdict) {
+      var ok = state.verdict === 'aprobado';
+      v.appendChild(el('div', { class: 'v-done ' + (ok ? 'ok' : 'changes') }, [
+        el('b', { text: ok ? 'Spec aprobada.' : 'Pediste cambios.' }),
+        ' ' + (ok ? 'Dile a Claude "listo" para que siga con el contrato y los tests.' : 'Dile a Claude "listo" para que ajuste la spec y publique una ronda nueva.') + (state.note ? ' Nota: ' + state.note : '')
+      ]));
+      if (canWrite) {
+        var undo = el('button', { type: 'button', text: 'Cambiar respuesta' });
+        undo.addEventListener('click', function () { state.verdict = null; save(); render(); });
+        v.appendChild(el('div', { class: 'v-actions' }, [undo]));
+      }
+      return;
+    }
+    var status = el('div', { class: 'v-status' });
+    status.appendChild(el('b', { text: n + ' de ' + total }));
+    status.appendChild(document.createTextNode(' decisiones respondidas' + (db ? '. Se guardan solas.' : '.')));
+    v.appendChild(status);
+    var approve = el('button', { type: 'button', class: 'primary', text: 'Aprobar spec' });
+    approve.disabled = n < total || !canWrite;
+    if (n < total) approve.title = 'Responde todas las decisiones';
+    approve.addEventListener('click', function () { state.verdict = 'aprobado'; state.note = ''; save(); render(); });
+    var changes = el('button', { type: 'button', class: 'danger', text: 'Pedir cambios' });
+    changes.disabled = !canWrite;
+    changes.addEventListener('click', function () { openChanges(); });
+    v.appendChild(el('div', { class: 'v-actions' }, [changes, approve]));
+  }
+  function openChanges() {
+    var v = document.getElementById('verdict'); v.textContent = '';
+    var ta = el('textarea', { id: 'verdict-note', placeholder: '¿Qué cambiarías? (requisitos, textos, decisiones…)', 'aria-label': 'Cambios pedidos' });
+    ta.style.flex = '1 1 320px';
+    var send = el('button', { type: 'button', class: 'primary', text: 'Enviar cambios' });
+    var cancel = el('button', { type: 'button', text: 'Cancelar' });
+    send.addEventListener('click', function () { state.verdict = 'cambios'; state.note = ta.value.trim(); save(); render(); });
+    cancel.addEventListener('click', render);
+    v.appendChild(ta); v.appendChild(el('div', { class: 'v-actions' }, [cancel, send]));
+    ta.focus();
+  }
+
+  render();
+  renderFallback();
+
+  // Conexión al almacén compartido (Claude lee las respuestas de aquí)
+  var loadTimer = setTimeout(function () { if (!db) showFallback(); }, 10000);
+  if (window.claude && window.claude.use) {
+    window.claude.use('db').then(function (x) {
+      if (!x) { clearTimeout(loadTimer); showFallback(); return; }
+      db = x; ref = db.doc(KEY);
+      ref.onSnapshot(function (snap) {
+        clearTimeout(loadTimer);
+        if (snap.exists && !snap.metadata.hasPendingWrites) {
+          var d = snap.data();
+          state = { decisions: JSON.parse(JSON.stringify(d.decisions || {})), verdict: d.verdict || null, note: d.note || '' };
+        }
+        render(); renderFallback();
+      }, function () { clearTimeout(loadTimer); canWrite = false; showFallback(); render(); });
+    }, function () { clearTimeout(loadTimer); showFallback(); });
+  } else { clearTimeout(loadTimer); showFallback(); }
+})();
+</script>
