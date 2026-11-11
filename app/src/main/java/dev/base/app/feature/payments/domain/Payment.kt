@@ -18,30 +18,36 @@ sealed interface PaymentStatus {
 
     /** `PENDIENTE`, pagable. */
     data object Pending : PaymentStatus {
-        override val isPayable: Boolean get() = TODO()
+        override val isPayable: Boolean get() = true
     }
 
     /** `VENCIDO`, pagable. */
     data object Overdue : PaymentStatus {
-        override val isPayable: Boolean get() = TODO()
+        override val isPayable: Boolean get() = true
     }
 
     /** `PAGADO`. */
     data object Paid : PaymentStatus {
-        override val isPayable: Boolean get() = TODO()
+        override val isPayable: Boolean get() = false
     }
 
     /** `EN_PROCESO`. */
     data object InProcess : PaymentStatus {
-        override val isPayable: Boolean get() = TODO()
+        override val isPayable: Boolean get() = false
     }
 
     data class Unknown(val raw: String) : PaymentStatus {
-        override val isPayable: Boolean get() = TODO()
+        override val isPayable: Boolean get() = false
     }
 
     companion object {
-        fun fromApi(raw: String): PaymentStatus = TODO()
+        fun fromApi(raw: String): PaymentStatus = when (raw) {
+            "PENDIENTE" -> Pending
+            "VENCIDO" -> Overdue
+            "PAGADO" -> Paid
+            "EN_PROCESO" -> InProcess
+            else -> Unknown(raw)
+        }
     }
 }
 
