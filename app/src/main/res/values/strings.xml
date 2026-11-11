@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AppBase</string>
-    <string name="home_title">Inicio</string>
+    <string name="payments_title">Mis pagos</string>
+    <string name="payments_loan">Crédito %1$s</string>
+    <string name="payments_error">No pudimos cargar tus pagos. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="payments_empty">Aún no tienes pagos programados para este crédito.</string>
+    <string name="status_pending">Pendiente</string>
+    <string name="status_overdue">Vencido</string>
+    <string name="status_paid">Pagado</string>
+    <string name="status_in_process">En proceso</string>
+    <string name="status_unknown">En revisión</string>
     <string name="state_empty">No hay nada que mostrar todavía.</string>
     <string name="state_retry">Reintentar</string>
     <string name="state_loading">Cargando</string>

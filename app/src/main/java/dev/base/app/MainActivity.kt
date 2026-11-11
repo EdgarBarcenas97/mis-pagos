@@ -13,12 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.base.app.core.designsystem.AppTheme
-import dev.base.app.feature.home.presentation.HomeRoute
+import dev.base.app.feature.payments.presentation.PaymentsRoute
 import kotlinx.serialization.Serializable
 
 /** Rutas tipadas de navegación. Cada feature agrega la suya aquí. */
 @Serializable
-data object HomeDestination
+data object PaymentsDestination
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -35,8 +35,8 @@ class MainActivity : ComponentActivity() {
 private fun AppNavHost() {
     val navController = rememberNavController()
     Scaffold { padding ->
-        NavHost(navController, startDestination = HomeDestination, modifier = Modifier.padding(padding)) {
-            composable<HomeDestination> { HomeRoute() }
+        NavHost(navController, startDestination = PaymentsDestination, modifier = Modifier.padding(padding)) {
+            composable<PaymentsDestination> { PaymentsRoute() }
         }
     }
 }
