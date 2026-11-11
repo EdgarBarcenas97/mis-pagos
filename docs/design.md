@@ -1,5 +1,7 @@
 # Diseño v1: "Mis pagos"
 
+**Estado:** aprobado el 2026-11-11 · mockup publicado en https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X
+
 Mockup: `docs/design/mockup.html`. Supuestos de producto pendientes de confirmar
 con el PO: ver "Preguntas abiertas" en `docs/product.md`.
 
