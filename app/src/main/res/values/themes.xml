@@ -5,7 +5,7 @@
     <!-- Splash de arranque (core-splashscreen, compatible desde minSdk 26).
          Fondo = color primario de AppTheme (light). -->
     <style name="Theme.AppBase.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FF1F6F5C</item>
+        <item name="windowSplashScreenBackground">@color/brand_green</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.AppBase</item>
     </style>
