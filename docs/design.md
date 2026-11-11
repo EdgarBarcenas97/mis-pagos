@@ -29,7 +29,7 @@ carga, vacío y error reutilizan `core/designsystem/StateViews.kt`.
 |---|---|---|
 | Monto | `es-MX`, 2 decimales, desde `BigDecimal` | `$1,250.10 MXN` |
 | Fecha límite | Fecha de calendario (no se convierte a la zona local) | `Vence el 30 nov 2026` · si está pagado: `Venció el 30 sep 2026` |
-| Estado | Chip con color semántico | `Pendiente` · `Vencido` · `Pagado` · `En proceso` |
+| Estado | Chip relleno (tonal), sin acción, con color semántico (Pagado en verde del tema) | `Pendiente` · `Vencido` · `Pagado` · `En proceso` |
 | Acción | Botón "Pagar" solo si el estado es Pendiente o Vencido | `Pagar` |
 
 Un estado desconocido muestra el chip "En revisión", sin botón.
@@ -51,7 +51,8 @@ Orden: por fecha límite ascendente.
 | Listo | Botón activo | `Pagar` | `pay_button_<id>` |
 | Confirmar | `AlertDialog` | Título `Confirmar pago` · cuerpo `Vas a pagar $1,250.10 MXN de la cuota que vence el 30 nov 2026.` · `Pagar $1,250.10` · `Cancelar` | `pay_confirm`, `pay_cancel` |
 | Procesando | Botón deshabilitado con spinner; ningún otro tap cobra | `Procesando…` | `pay_button_<id>` (disabled) |
-| Verificando (tras timeout) | Texto en lugar del botón, sin acción | `Verificando tu pago…` · apoyo: `No vuelvas a pagar; te avisaremos en cuanto se confirme.` | `payment_verifying_<id>` |
+| Verificando (tras timeout) | Texto en lugar del botón; reintenta solo 3 veces (cada 3 s) con la misma llave | `Verificando tu pago…` · apoyo: `No vuelvas a pagar; te avisaremos en cuanto se confirme.` | `payment_verifying_<id>` |
+| Verificando, reintentos agotados | Igual + botón de texto | `Verificar de nuevo` (misma llave) | `payment_verify_again_<id>` |
 | Pagado | El chip pasa a `Pagado` y sale un snackbar | `Pago registrado.` | `payment_status_<id>` |
 | Rechazado (error definitivo) | Snackbar, y el botón vuelve a Listo | `No se pudo procesar el pago y no se hizo ningún cargo.` | — |
 

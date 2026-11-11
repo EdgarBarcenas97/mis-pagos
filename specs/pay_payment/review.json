@@ -1,0 +1,216 @@
+{
+  "feature": "pay_payment",
+  "title": "Pagar sin duplicar",
+  "round": 1,
+  "status": "spec_ready",
+  "branch": "feat/pay_payment",
+  "commit": "(spec)",
+  "specPath": "specs/pay_payment/",
+  "summary": "Botón Pagar con confirmación; una llave de idempotencia por pago que se reutiliza en cada reintento; botón bloqueado mientras procesa; timeout → Verificando con 3 reintentos automáticos (misma llave) y luego 'Verificar de nuevo'. Servidor simulado con estado: 2–5 s, timeouts que a veces sí cobran, idempotente. Test de punta a punta: 1 solo cargo. Incluye la deuda de los chips.",
+  "mockupUrl": "https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X",
+  "designChanges": [
+    "Verificando: tras agotar los 3 reintentos automáticos aparece el botón 'Verificar de nuevo' (antes no había acción).",
+    "Chips de estado: relleno tonal, Pagado en verde propio del tema, sin acción (deuda de la demo de payments_list)."
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "title": "Cómo se concilia tras un timeout",
+      "context": "El servidor quizá cobró y quizá no.",
+      "options": [
+        {
+          "id": "same-key",
+          "label": "Reintentar pay con la misma llave (idempotente)",
+          "detail": "Respuesta definitiva: si ya cobró devuelve Pagado sin cobrar otra vez; si no, cobra una vez.",
+          "recommended": true
+        },
+        {
+          "id": "get-status",
+          "label": "Consultar el estado del pago con un GET",
+          "detail": "'Sigue pendiente' es ambiguo: el cobro puede seguir en vuelo."
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "title": "Reintentos automáticos",
+      "context": "Cuánto insistir antes de pedir acción al usuario.",
+      "options": [
+        {
+          "id": "3x3s",
+          "label": "3 reintentos cada 3 s, luego 'Verificar de nuevo'",
+          "detail": "Resuelve solo la mayoría de casos y no deja al usuario atrapado.",
+          "recommended": true
+        },
+        {
+          "id": "manual",
+          "label": "Solo manual",
+          "detail": "Más simple, pero el usuario tiene que actuar en cada timeout."
+        },
+        {
+          "id": "infinite",
+          "label": "Reintentar indefinidamente con backoff",
+          "detail": "Sin acción del usuario, pero puede quedarse girando para siempre."
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "title": "Dónde vive el flujo de pago",
+      "context": "payments_list ya está cerrada con tests congelados.",
+      "options": [
+        {
+          "id": "separate",
+          "label": "PaymentGateway + PayViewModel aparte",
+          "detail": "No rompe los tests de payments_list; responsabilidad única.",
+          "recommended": true
+        },
+        {
+          "id": "extend",
+          "label": "Extender PaymentsRepository y PaymentsViewModel",
+          "detail": "Menos piezas, pero obliga a cambiar tests cerrados."
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "title": "Dónde vive la llave",
+      "context": "Si se mata el proceso a mitad de un pago.",
+      "options": [
+        {
+          "id": "vm",
+          "label": "En el ViewModel (memoria)",
+          "detail": "Cabe en el tiempo; tras matar la app, el siguiente GET muestra si quedó pagado.",
+          "recommended": true
+        },
+        {
+          "id": "disk",
+          "label": "Persistida (DataStore/Room)",
+          "detail": "Más robusta, pero suma 10+ min."
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "title": "Confirmación antes de pagar",
+      "context": "Ya estaba en el diseño aprobado; se confirma aquí.",
+      "options": [
+        {
+          "id": "dialog",
+          "label": "Diálogo con monto y fecha",
+          "detail": "Un tap extra protege de cobros por error.",
+          "recommended": true
+        },
+        {
+          "id": "none",
+          "label": "Pagar con un tap",
+          "detail": "Más rápido, más riesgo."
+        }
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "group": "Botón",
+      "text": "Pagar solo en Pendiente/Vencido sin pago en curso"
+    },
+    {
+      "id": "R2",
+      "group": "Botón",
+      "text": "Diálogo Confirmar pago; Cancelar no llama al servidor"
+    },
+    {
+      "id": "R3",
+      "group": "No duplicar",
+      "text": "Confirmar → llave nueva, 1 llamada, Procesando…"
+    },
+    {
+      "id": "R4",
+      "group": "No duplicar",
+      "text": "Doble tap / segundo confirm no llama otra vez"
+    },
+    {
+      "id": "R5",
+      "group": "Resultado",
+      "text": "Confirmado → Pagado + 'Pago registrado.'"
+    },
+    {
+      "id": "R6",
+      "group": "Resultado",
+      "text": "Timeout/red/5xx → Verificando, sin Pagar"
+    },
+    {
+      "id": "R7",
+      "group": "Conciliación",
+      "text": "Reintenta con la misma llave cada 3 s, 3 veces"
+    },
+    {
+      "id": "R8",
+      "group": "Conciliación",
+      "text": "Agotados → 'Verificar de nuevo' con la misma llave"
+    },
+    {
+      "id": "R9",
+      "group": "Resultado",
+      "text": "4xx → aviso de rechazo sin cargo, vuelve Pagar"
+    },
+    {
+      "id": "R10",
+      "group": "Conciliación",
+      "text": "Recargar no borra el estado; PAGADO en lista resuelve"
+    },
+    {
+      "id": "R11",
+      "group": "Servidor",
+      "text": "2–5 s, timeouts que a veces cobran, idempotente por llave"
+    },
+    {
+      "id": "R12",
+      "group": "Punta a punta",
+      "text": "Timeout que cobró + reintento → exactamente 1 cargo"
+    },
+    {
+      "id": "R13",
+      "group": "UI",
+      "text": "Chip tonal, Pagado verde, no pulsable"
+    }
+  ],
+  "tests": [
+    {
+      "id": "t1",
+      "type": "unit",
+      "what": "FakePaymentsServerTest + FakeBackendInterceptorPayTest: latencia, timeout con/sin registro, 422, idempotencia, chargeCount ≤ 1",
+      "covers": "R11"
+    },
+    {
+      "id": "t2",
+      "type": "unit",
+      "what": "PaymentGatewayImplTest (MockWebServer): 200 → Paid, 422 → Declined, 503/desconexión → Unknown, header Idempotency-Key",
+      "covers": "R6,R9"
+    },
+    {
+      "id": "t3",
+      "type": "unit",
+      "what": "PayViewModelTest (fake gateway, tiempo virtual): confirmación, llave única, doble tap, verificación 3×3 s, verificar de nuevo, rechazo, conciliación con la lista",
+      "covers": "R2,R3,R4,R5,R6,R7,R8,R9,R10"
+    },
+    {
+      "id": "t4",
+      "type": "unit",
+      "what": "PayEndToEndTest: PayViewModel + gateway real + Retrofit + interceptor → 1 cargo",
+      "covers": "R12"
+    },
+    {
+      "id": "t5",
+      "type": "ui",
+      "what": "PayScreenTest (androidTest, compila): botón, diálogo, Procesando, Verificando, chip sin acción",
+      "covers": "R1,R2,R5,R6,R8,R13"
+    }
+  ],
+  "outOfScope": [
+    "Persistir la llave tras matar el proceso",
+    "Pagos parciales y método de pago",
+    "Pagar sin conexión"
+  ]
+}

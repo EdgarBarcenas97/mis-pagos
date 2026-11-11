@@ -31,7 +31,7 @@
         "Chips de estado según el mockup: relleno tonal, Pagado en verde y sin acción (deuda de la demo de payments_list)"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "spec_ready"
     },
     {
       "id": 3,
