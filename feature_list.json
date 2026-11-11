@@ -44,6 +44,19 @@
       ],
       "sdd": true,
       "status": "pending"
+    },
+    {
+      "id": 4,
+      "name": "splash",
+      "title": "Splash de arranque con ícono y texto \"Mis pagos\"",
+      "description": "Pedida por el humano a mitad de sesión; va en la rama feat/payments_list. SplashScreen API (androidx.core:core-splashscreen) con el ícono de la app sobre el color primario y el texto \"Mis pagos\" como branding image.",
+      "acceptance": [
+        "Al abrir la app se ve el splash con el ícono y el texto \"Mis pagos\"",
+        "Desaparece al dibujarse el primer frame, sin retraso artificial",
+        "verify.sh en verde"
+      ],
+      "sdd": false,
+      "status": "pending"
     }
   ]
 }
