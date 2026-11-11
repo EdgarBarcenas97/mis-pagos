@@ -6,6 +6,8 @@ duplique nunca**. El backend es simulado (latencia, fallos aleatorios y timeouts
 
 **📦 Descarga del APK:** https://drive.google.com/drive/folders/1z8W5d5ouUthGlfWyAR9soKXMzD9OYbhN?usp=sharing
 
+**🎨 Mockup de pantallas (aprobado):** https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X — todos los estados de la pantalla; detalle en `docs/design.md`.
+
 ## Cómo correrlo
 
 ```bash
@@ -55,6 +57,7 @@ Resumen en [`DECISIONS.md`](DECISIONS.md); el stack completo y las alternativas 
 | Archivo de reglas / contexto del agente | [`CLAUDE.md`](CLAUDE.md), más `docs/` y `.claude/` (agentes, hooks y skills) |
 | Tests que corran | `app/src/test/` (unitarios, JUnit + Turbine + MockWebServer) y `app/src/androidTest/` (Compose UI) |
 | `DECISIONS.md` (≤ 5 líneas) | [`DECISIONS.md`](DECISIONS.md) |
+| Mockup de pantallas | [Artifact](https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X) · `docs/design/mockup.html` |
 | APK | [Google Drive](https://drive.google.com/drive/folders/1z8W5d5ouUthGlfWyAR9soKXMzD9OYbhN?usp=sharing) |
 
 ## Features
