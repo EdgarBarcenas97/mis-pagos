@@ -68,4 +68,4 @@ Resumen en [`DECISIONS.md`](DECISIONS.md); el stack completo y las alternativas 
 | `pay_payment`: pagar sin duplicar | en curso | `specs/pay_payment/` |
 | `offline_last_known`: último dato bueno (stretch) | pendiente | — |
 | `splash`: splash con ícono y "Mis pagos" | ✅ hecha | `progress/impl_splash.md` |
-| `app_logo`: ícono de la app | en curso | — |
+| `app_logo`: ícono de la app | ✅ hecha | `progress/impl_app_logo.md` |

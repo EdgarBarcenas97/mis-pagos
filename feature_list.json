@@ -28,7 +28,8 @@
         "Tras un timeout, el reintento usa la misma llave de idempotencia y el servidor cobra una sola vez",
         "Tras un timeout, el pago queda en Verificando hasta conciliar; al confirmar pasa a PAGADO",
         "Un test con el fake demuestra que el servidor registró exactamente un cobro",
-        "Chips de estado según el mockup: relleno tonal, Pagado en verde y sin acción (deuda de la demo de payments_list)"
+        "Chips de estado según el mockup: relleno tonal, Pagado en verde y sin acción (deuda de la demo de payments_list)",
+        "El nombre de la app en el launcher es \"Mis pagos\" (hoy dice \"AppBase\")"
       ],
       "sdd": true,
       "status": "spec_ready"
@@ -69,7 +70,7 @@
         "verify.sh en verde"
       ],
       "sdd": false,
-      "status": "pending"
+      "status": "done"
     }
   ]
 }
