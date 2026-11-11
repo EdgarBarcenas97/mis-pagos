@@ -15,7 +15,7 @@
         "Montos con BigDecimal; la fecha límite se muestra como fecha de calendario (30 nov 2026)"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "spec_ready"
     },
     {
       "id": 2,
