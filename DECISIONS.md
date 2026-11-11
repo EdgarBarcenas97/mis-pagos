@@ -1,4 +1,4 @@
-1. **Fuente de verdad:** un fake con latencia y fallos detrás de `PaymentsRepository`. Se cambia por Retrofit sin tocar la UI, pero hoy no se prueba red real.
+1. **Fuente de verdad:** Retrofit `PaymentsApi` detrás de `PaymentsRepository`. Un interceptor de OkHttp simula el backend (latencia, 30% de fallos) y MockWebServer lo prueba en los tests. Cuesta más que un fake en memoria, pero el parseo HTTP y los errores se prueban de verdad y cambiar al backend real es solo cambiar la URL.
 2. **Dinero y fechas exactos:** `BigDecimal` para montos y `LocalDate` tomada del `Z` sin convertir la zona horaria. Es más verboso que `Double`/`Instant`, pero no hay redondeos ni vencimientos que se adelanten un día.
 3. **Estado de UI:** `sealed interface` (Loading, Empty, Content, Error) expuesto como `StateFlow` desde el ViewModel. Es simple y testeable, aunque cada fila de pago necesita su propio sub-estado.
 4. **Sin pagos duplicados:** una llave de idempotencia por pago que se reutiliza en cada reintento, botón bloqueado mientras procesa, y tras un timeout se muestra "Verificando" y se concilia. Cuesta más estados, pero un timeout nunca termina en un segundo cobro.

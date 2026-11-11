@@ -31,7 +31,7 @@ El sistema DEBE mapear los estados `PENDIENTE`, `VENCIDO`, `PAGADO` y `EN_PROCES
 SI llega un estado desconocido ENTONCES el sistema DEBE mostrar el pago con la etiqueta "En revisión", sin considerarlo pagable y sin descartar el resto de la lista.
 
 ## R10
-El backend simulado `getPayments()` DEBE tardar ~1.5 s y fallar el 30% de las veces, con el azar y la latencia inyectables para que los tests sean deterministas.
+El backend simulado (interceptor de OkHttp detrás de `PaymentsApi`) DEBE tardar ~1.5 s y responder error (HTTP 503) el 30% de las veces, con el azar y la espera inyectables para que los tests sean deterministas.
 
 ## Fuera de alcance
 - Botón "Pagar" y su flujo (feature `pay_payment`). Aquí solo se calcula `isPayable`.

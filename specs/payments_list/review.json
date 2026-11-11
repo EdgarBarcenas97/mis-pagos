@@ -2,7 +2,7 @@
   "feature": "payments_list",
   "title": "Lista de pagos con estados de UI",
   "round": 1,
-  "status": "spec_ready",
+  "status": "in_progress",
   "branch": "feat/payments_list",
   "commit": "(spec)",
   "specPath": "specs/payments_list/",
@@ -163,19 +163,19 @@
     {
       "id": "t2",
       "type": "unit",
-      "what": "PaymentsRepositoryImplTest: orden, error → Network, JSON inválido → Serialization",
+      "what": "PaymentsRepositoryImplTest (MockWebServer): 200 ordenado, 503 → Server, desconexión → Network, JSON inválido → Serialization",
       "covers": "R2,R5"
     },
     {
       "id": "t3",
       "type": "unit",
-      "what": "PaymentsMapperTest: BigDecimal exacto, fecha UTC con TZ CDMX, EN_PROCESO y desconocido",
+      "what": "PaymentsMapperTest + BigDecimalSerializer: BigDecimal exacto, fecha UTC con TZ CDMX, EN_PROCESO y desconocido",
       "covers": "R6,R7,R8,R9"
     },
     {
       "id": "t4",
       "type": "unit",
-      "what": "FakePaymentsApiTest: latencia virtual 1.5 s, falla con failureRate 1, éxito con 0",
+      "what": "FakeBackendInterceptorTest: espera 1500 ms, 503 con failureRate 1, 200 con el JSON con 0",
       "covers": "R10"
     },
     {

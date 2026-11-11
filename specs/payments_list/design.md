@@ -9,10 +9,12 @@ No cambia el diseño aprobado.
 | Archivo | Qué |
 |---|---|
 | `feature/payments/domain/Payment.kt` | `Payment`, `PaymentStatus`, `PaymentsRepository` |
-| `feature/payments/data/FakePaymentsApi.kt` | Backend simulado con el JSON del enunciado |
-| `feature/payments/data/PaymentsMapper.kt` | JSON → dominio |
-| `feature/payments/data/PaymentsRepositoryImpl.kt` | Llama al API, mapea, ordena, `AppResult` |
-| `feature/payments/di/PaymentsModule.kt` | Binds de Hilt |
+| `feature/payments/data/PaymentsApi.kt` | Interfaz Retrofit y DTOs (`kotlinx.serialization`) |
+| `feature/payments/data/BigDecimalSerializer.kt` | Lee el número JSON como texto → `BigDecimal` |
+| `feature/payments/data/FakeBackendInterceptor.kt` | Backend simulado dentro de OkHttp: latencia + 30% de fallos + JSON del enunciado |
+| `feature/payments/data/PaymentsMapper.kt` | DTO → dominio |
+| `feature/payments/data/PaymentsRepositoryImpl.kt` | `safeApiCall` + mapeo + orden |
+| `feature/payments/di/PaymentsModule.kt` | OkHttp con el interceptor, Retrofit, `PaymentsApi` y binds |
 | `feature/payments/presentation/PaymentsFormat.kt` | `formatAmount`, `formatDueDate` |
 | `feature/payments/presentation/PaymentsViewModel.kt` | `PaymentsUiState`, `PaymentsViewModel` |
 | `feature/payments/presentation/PaymentsScreen.kt` | `PaymentsRoute`, `PaymentsScreen`, `PaymentsTags` |
@@ -45,23 +47,37 @@ data class Loan(val loanId: String, val payments: List<Payment>)
 interface PaymentsRepository { suspend fun getPayments(): AppResult<Loan> }
 
 // data
-class PaymentsUnavailableException : Exception()
-class FakePaymentsApi(
+interface PaymentsApi {
+    @GET("loans/payments") suspend fun getPayments(): LoanDto
+}
+@Serializable data class LoanDto(val loanId: String, val payments: List<PaymentDto>)
+@Serializable data class PaymentDto(
+    val id: String,
+    @Serializable(with = BigDecimalSerializer::class) val amount: BigDecimal, // texto del primitivo, nunca Double
+    val currency: String,
+    val dueDate: String,   // ISO-8601 instant
+    val status: String,    // texto libre: un estado nuevo no rompe el parseo
+)
+object BigDecimalSerializer : KSerializer<BigDecimal>
+/** DTO → dominio. dueDate = Instant.parse(..).atZone(UTC).toLocalDate(). Fecha inválida → DateTimeParseException. */
+fun LoanDto.toDomain(): Loan
+
+/** Backend simulado. Si random.nextDouble() < failureRate responde HTTP 503; si no, 200 con [body]. Antes duerme latencyMs con [sleeper] (inyectable en tests). */
+class FakeBackendInterceptor(
     private val random: Random = Random.Default,
     private val latencyMs: Long = 1_500,
     private val failureRate: Double = 0.30,
-    private val json: String = SAMPLE_JSON,
-) {
-    /** Espera latencyMs (delay, testeable con tiempo virtual); si random < failureRate lanza PaymentsUnavailableException; si no, devuelve el JSON. */
-    suspend fun getPayments(): String
-    companion object { const val SAMPLE_JSON: String }  // JSON exacto del enunciado
+    private val body: String = SAMPLE_JSON,
+    private val sleeper: (Long) -> Unit = Thread::sleep,
+) : Interceptor {
+    companion object { const val SAMPLE_JSON: String /* JSON exacto del enunciado */ }
 }
-/** Monto leído como texto del primitivo JSON → BigDecimal; dueDate = Instant.parse(..).atZone(UTC).toLocalDate(). Lanza SerializationException/IllegalArgumentException si el JSON es inválido. */
-fun parseLoan(json: String): Loan
+
 class PaymentsRepositoryImpl @Inject constructor(
-    private val api: FakePaymentsApi,
+    private val api: PaymentsApi,
 ) : PaymentsRepository
-// PaymentsUnavailableException → AppError.Network; error de parseo → AppError.Serialization; éxito → pagos ordenados por dueDate asc.
+// safeApiCall de core/network: IOException → Network, HTTP → Server/NotFound, SerializationException → Serialization.
+// Error de mapeo (fecha inválida) → AppError.Serialization. Éxito → pagos ordenados por dueDate asc.
 
 // presentation
 fun formatAmount(amount: BigDecimal, currency: String): String  // "$1,250.10 MXN" (Locale es-MX, 2 decimales)
@@ -91,8 +107,12 @@ object PaymentsTags {
 }
 ```
 
-`FakePaymentsApi` se provee en `PaymentsModule` como `@Singleton` con los valores
-por defecto. Los tests lo crean con `Random(seed)` o con `failureRate` 0 o 1.
+`PaymentsModule` construye un `OkHttpClient` derivado del de `CoreModule`
+(`newBuilder().addInterceptor(FakeBackendInterceptor())`) y un Retrofit con
+`Network.retrofit("https://api.mispagos.fake/", client)`. Nada sale a la red: el
+interceptor responde antes. Los tests del repositorio usan **MockWebServer** con
+Retrofit real (sin el interceptor), y los del interceptor usan un `OkHttpClient`
+con `failureRate` 0 o 1 y un `sleeper` que registra la espera.
 
 ## UI
 
@@ -119,7 +139,7 @@ Los textos de fecha del formateador ("Vence el" / "Venció el") viven en
 
 ## Alternativas descartadas
 
-- **Retrofit + MockWebServer:** más realista, pero no cabe en 45 min. El repositorio
-  aísla la fuente, así que el cambio después no toca la UI.
+- **Fake en código (sin Retrofit):** más rápido, pero no prueba el parseo HTTP ni los
+  códigos de error. El humano eligió Retrofit + MockWebServer (D1 de la revisión).
 - **`amount: Double` en el DTO:** `1250.10` no es exacto en binario, y en dinero no se acepta.
 - **Fecha en la zona del dispositivo:** en CDMX mostraría 29 nov y adelantaría el vencimiento.

@@ -1,4 +1,4 @@
-- [ ] T1 — Dominio, `PaymentStatus.fromApi` y `parseLoan` (BigDecimal y fecha UTC). Cubre: R6, R7, R8, R9.
-- [ ] T2 — `FakePaymentsApi` y `PaymentsRepositoryImpl` (errores y orden). Cubre: R2, R5, R10.
+- [ ] T1 — Dominio, `PaymentStatus.fromApi`, DTOs, `BigDecimalSerializer` y `toDomain` (fecha UTC). Cubre: R6, R7, R8, R9.
+- [ ] T2 — `FakeBackendInterceptor`, `PaymentsApi` y `PaymentsRepositoryImpl` con MockWebServer (errores y orden). Cubre: R2, R5, R10.
 - [ ] T3 — `PaymentsViewModel` (Loading, Error, retry, Empty, Content). Cubre: R1, R2, R3, R4, R5.
 - [ ] T4 — Formateadores, `PaymentsScreen`, tags, strings, DI y navegación. Cubre: R6, R7, R8.
