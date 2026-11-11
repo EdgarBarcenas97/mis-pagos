@@ -64,7 +64,8 @@ Resumen en [`DECISIONS.md`](DECISIONS.md); el stack completo y las alternativas 
 
 | Feature | Estado | Spec |
 |---|---|---|
-| `payments_list`: lista y estados de UI | en curso | `specs/payments_list/` |
-| `pay_payment`: pagar sin duplicar | pendiente | — |
+| `payments_list`: lista y estados de UI | ✅ hecha | `specs/payments_list/` · demo `progress/evidence/payments_list/` |
+| `pay_payment`: pagar sin duplicar | en curso | `specs/pay_payment/` |
 | `offline_last_known`: último dato bueno (stretch) | pendiente | — |
-| `splash`: splash con ícono y "Mis pagos" | pendiente | — |
+| `splash`: splash con ícono y "Mis pagos" | ✅ hecha | `progress/impl_splash.md` |
+| `app_logo`: ícono de la app | en curso | — |
