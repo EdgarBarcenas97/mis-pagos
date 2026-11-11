@@ -5,6 +5,7 @@ kotlin = "2.2.21"
 ktlint-gradle = "14.2.0"
 compose-bom = "2025.07.00"
 core-ktx = "1.17.0"
+core-splashscreen = "1.2.0"
 activity-compose = "1.10.1"
 lifecycle = "2.9.2"
 navigation = "2.9.1"
@@ -25,6 +26,7 @@ mockk = "1.14.6"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
