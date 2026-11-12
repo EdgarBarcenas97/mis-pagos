@@ -141,7 +141,7 @@ fun PaymentsScreen(
             is PaymentsUiState.Content -> Column(contentModifier) {
                 // offline_last_known: banner sobre la lista; con staleSince != null, Pagar debe ir desactivado.
                 state.staleSince?.let { LastUpdatedBanner(it) }
-                PaymentsList(state.payments, payState.payStates, onPayClick, onVerifyAgain)
+                PaymentsList(state.payments, payState.payStates, onPayClick, onVerifyAgain, payEnabled = state.staleSince == null)
             }
         }
     }
@@ -153,7 +153,8 @@ private fun PaymentsList(
     payStates: Map<String, PayState>,
     onPayClick: (Payment) -> Unit,
     onVerifyAgain: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    payEnabled: Boolean = true
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize().testTag(PaymentsTags.LIST),
@@ -161,7 +162,7 @@ private fun PaymentsList(
         verticalArrangement = Arrangement.spacedBy(Spacing.sm)
     ) {
         items(payments, key = { it.id }) { payment ->
-            PaymentRow(payment, payStates[payment.id], onPayClick, onVerifyAgain)
+            PaymentRow(payment, payStates[payment.id], onPayClick, onVerifyAgain, payEnabled)
         }
     }
 }
@@ -171,7 +172,8 @@ private fun PaymentRow(
     payment: Payment,
     payState: PayState?,
     onPayClick: (Payment) -> Unit,
-    onVerifyAgain: (String) -> Unit
+    onVerifyAgain: (String) -> Unit,
+    payEnabled: Boolean = true
 ) {
     val status = if (payState == PayState.Paid) PaymentStatus.Paid else payment.status
     Card(modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.item(payment.id))) {
@@ -209,6 +211,7 @@ private fun PaymentRow(
                 null -> if (status.isPayable) {
                     Button(
                         onClick = { onPayClick(payment) },
+                        enabled = payEnabled,
                         modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.payButton(payment.id))
                     ) { Text(stringResource(R.string.pay_button)) }
                 }

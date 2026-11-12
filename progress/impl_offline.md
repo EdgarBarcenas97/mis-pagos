@@ -8,10 +8,11 @@
 - `PaymentsScreen.kt` (después del commit `2db87d3 feat(pay_payment)`): solo la rama `Content` envuelta en `Column` con el banner encima de la lista cuando `staleSince != null`.
 
 ## Verificación
-`./gradlew --console=plain --quiet testDebugUnitTest assembleDebug` en verde (incluye payments_list y pay_payment).
+`./gradlew --console=plain --quiet testDebugUnitTest assembleDebug` en verde (incluye payments_list y pay_payment), ejecutado otra vez después del cambio de Pagar.
 
 ## Desviaciones / pendientes
-- **Pagar desactivado: NO hecho.** En el `PaymentsScreen.kt` commiteado por pay_payment no existe todavía el botón Pagar (queda `TODO(pay_payment T4)`), así que no hay nada que desactivar. Cuando exista hay que pasar `enabled = state.staleSince == null` al botón (dejé un comentario en la rama Content).
+- **Pagar desactivado:** `payEnabled: Boolean = true` (con default) en los privados `PaymentsList`/`PaymentRow`, y `enabled = payEnabled` en el botón Pagar; la rama Content pasa `payEnabled = state.staleSince == null`.
+- **Incidente: commit con trabajo ajeno.** Entre mi edición y mi commit `14584cd`, el agente de pay_payment escribió su T4 (botón Pagar, diálogo, Verificando) en `PaymentsScreen.kt` sin commitear; como hice commit del archivo entero, su trabajo en curso quedó dentro de `14584cd`. No se perdió nada y no reescribí el historial (hay otros agentes trabajando en la rama). Hay que avisar al agente de pay_payment de que su cambio en `PaymentsScreen.kt` ya está commiteado ahí.
 - El banner calcula "hace X min" al componer; no se refresca solo con el paso del tiempo (no hay ticker).
 - `Clock` se crea en el constructor `@Inject` en vez de proveerse por Hilt (no había `Clock` en el grafo; evitar tocar más módulos).
 
