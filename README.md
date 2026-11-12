@@ -55,7 +55,7 @@ Resumen en [`DECISIONS.md`](DECISIONS.md); el stack completo y las alternativas 
 |---|---|
 | Código de la app compilando | `app/`, verificado por `scripts/verify.sh` |
 | Archivo de reglas / contexto del agente | [`CLAUDE.md`](CLAUDE.md), más `docs/` y `.claude/` (agentes, hooks y skills) |
-| Tests que corran | `app/src/test/` (unitarios, JUnit + Turbine + MockWebServer) y `app/src/androidTest/` (Compose UI) |
+| Tests que corran | `app/src/test/` (unitarios, JUnit + Turbine + MockWebServer) y `app/src/androidTest/` (Compose UI: 18/18 en verde en emulador, `scripts/verify.sh --ui`) |
 | `DECISIONS.md` (≤ 5 líneas) | [`DECISIONS.md`](DECISIONS.md) |
 | Mockup de pantallas | [Artifact](https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X) · `docs/design/mockup.html` |
 | APK | [Google Drive](https://drive.google.com/drive/folders/1z8W5d5ouUthGlfWyAR9soKXMzD9OYbhN?usp=sharing) |
@@ -84,7 +84,7 @@ Si hay timeout, el pago queda en **"Verificando tu pago…"**, se reintenta solo
 | Feature | Estado | Spec |
 |---|---|---|
 | `payments_list`: lista y estados de UI | ✅ hecha | `specs/payments_list/` · demo `progress/evidence/payments_list/` |
-| `pay_payment`: pagar sin duplicar | ✅ hecha | `specs/pay_payment/` (R1–R15) |
+| `pay_payment`: pagar sin duplicar | ✅ hecha | `specs/pay_payment/` (R1–R15) · demo `progress/evidence/pay_payment/demo.md` |
 | `offline_last_known`: último dato bueno (stretch) | funciona; faltan sus tests (T3) | `specs/offline_last_known/` |
 | `splash`: splash con ícono y "Mis pagos" | ✅ hecha | `progress/impl_splash.md` |
 | `app_logo`: ícono de la app | ✅ hecha | `progress/impl_app_logo.md` |
