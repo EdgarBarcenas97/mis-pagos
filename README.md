@@ -79,6 +79,41 @@ Si hay timeout, el pago queda en **"Verificando tu pago…"**, se reintenta solo
 
 **Diseño:** paleta de la marca (verde `#1F6F5C`) en **modo claro y oscuro**, con splash y logo propios. El mockup está en el link de arriba.
 
+## Capturas
+
+Tomadas del APK en un emulador Pixel (API 34). Hay más evidencia en `progress/evidence/`.
+
+**Lista y estados (requisitos 1 y 2)**
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/splash.png" width="200"><br><sub>Splash</sub></td>
+<td align="center"><img src="docs/screenshots/cargando.png" width="200"><br><sub>Cargando</sub></td>
+<td align="center"><img src="docs/screenshots/lista.png" width="200"><br><sub>Contenido</sub></td>
+<td align="center"><img src="docs/screenshots/error.png" width="200"><br><sub>Error con Reintentar</sub></td>
+</tr>
+</table>
+
+**Pagar sin duplicar (requisito 3)**
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/confirmar.png" width="200"><br><sub>Confirmar pago</sub></td>
+<td align="center"><img src="docs/screenshots/procesando.png" width="200"><br><sub>Procesando (botón bloqueado)</sub></td>
+<td align="center"><img src="docs/screenshots/verificando.png" width="200"><br><sub>Timeout → Verificando</sub></td>
+<td align="center"><img src="docs/screenshots/pagado.png" width="200"><br><sub>Pagado</sub></td>
+</tr>
+</table>
+
+**Sin conexión (requisito 4) y modo oscuro**
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/sin-conexion.png" width="200"><br><sub>Último dato bueno, Pagar desactivado</sub></td>
+<td align="center"><img src="docs/screenshots/oscuro.png" width="200"><br><sub>Modo oscuro</sub></td>
+</tr>
+</table>
+
 ## Features
 
 | Feature | Estado | Spec |
