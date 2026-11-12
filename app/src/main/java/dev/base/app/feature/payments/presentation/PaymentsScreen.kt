@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -33,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.base.app.R
@@ -183,7 +187,10 @@ private fun PaymentRow(
     payEnabled: Boolean = true
 ) {
     val status = if (payState == PayState.Paid) PaymentStatus.Paid else payment.status
-    Card(modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.item(payment.id))) {
+    Card(
+        modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.item(payment.id)),
+        shape = RoundedCornerShape(14.dp)
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.md),
             verticalArrangement = Arrangement.spacedBy(Spacing.sm)
@@ -196,12 +203,14 @@ private fun PaymentRow(
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     Text(
                         formatAmount(payment.amount, payment.currency),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.testTag(PaymentsTags.amount(payment.id))
                     )
                     Text(
                         formatDueDate(payment.dueDate, paid = status == PaymentStatus.Paid),
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag(PaymentsTags.due(payment.id))
                     )
                 }
@@ -209,18 +218,22 @@ private fun PaymentRow(
             }
             when (payState) {
                 is PayState.Verifying -> VerifyingBox(payment.id, payState, onVerifyAgain)
-                PayState.Processing -> Button(
-                    onClick = {},
-                    enabled = false,
-                    modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.payButton(payment.id))
-                ) { Text(stringResource(R.string.pay_processing)) }
+                PayState.Processing -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    Button(
+                        onClick = {},
+                        enabled = false,
+                        modifier = Modifier.testTag(PaymentsTags.payButton(payment.id))
+                    ) { Text(stringResource(R.string.pay_processing)) }
+                }
                 PayState.Paid -> Unit
                 null -> if (status.isPayable) {
-                    Button(
-                        onClick = { onPayClick(payment) },
-                        enabled = payEnabled,
-                        modifier = Modifier.fillMaxWidth().testTag(PaymentsTags.payButton(payment.id))
-                    ) { Text(stringResource(R.string.pay_button)) }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        Button(
+                            onClick = { onPayClick(payment) },
+                            enabled = payEnabled,
+                            modifier = Modifier.testTag(PaymentsTags.payButton(payment.id))
+                        ) { Text(stringResource(R.string.pay_button)) }
+                    }
                 }
             }
         }
@@ -272,13 +285,14 @@ private fun StatusChip(paymentId: String, status: PaymentStatus) {
     Surface(
         color = colors.first,
         contentColor = colors.second,
-        shape = MaterialTheme.shapes.small,
+        shape = CircleShape,
         modifier = Modifier.testTag(PaymentsTags.status(paymentId))
     ) {
         Text(
             stringResource(label),
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = Spacing.sm, vertical = Spacing.xs)
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
         )
     }
 }
