@@ -56,3 +56,34 @@ data class Loan(val loanId: String, val payments: List<Payment>)
 interface PaymentsRepository {
     suspend fun getPayments(): AppResult<Loan>
 }
+
+/** Resultado de intentar pagar. */
+sealed interface PayResult {
+    /** El servidor confirmó (o ya estaba pagado). */
+    data object Paid : PayResult
+
+    /** Rechazo definitivo: no hubo cargo. */
+    data object Declined : PayResult
+
+    /** Timeout / red / 5xx: no sabemos. */
+    data object Unknown : PayResult
+}
+
+interface PaymentGateway {
+    suspend fun pay(paymentId: String, idempotencyKey: String): PayResult
+}
+
+/** Impl: `UUID.randomUUID().toString()`. */
+fun interface IdempotencyKeyFactory {
+    fun newKey(): String
+}
+
+/** Llaves de pagos sin resultado definitivo. Escritura síncrona: se guarda antes de llamar a pay. */
+interface PendingPaymentStore {
+    fun save(paymentId: String, idempotencyKey: String)
+
+    fun remove(paymentId: String)
+
+    /** paymentId → llave. */
+    fun all(): Map<String, String>
+}

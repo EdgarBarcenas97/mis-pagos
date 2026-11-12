@@ -3,11 +3,20 @@ package dev.base.app.feature.payments.data
 import java.math.BigDecimal
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PaymentsApi {
     @GET("loans/payments")
     suspend fun getPayments(): LoanDto
+
+    @POST("loans/payments/{id}/pay")
+    suspend fun pay(@Path("id") id: String, @Header("Idempotency-Key") idempotencyKey: String): PayResponseDto
 }
+
+@Serializable
+data class PayResponseDto(val paymentId: String, val status: String)
 
 @Serializable
 data class LoanDto(val loanId: String, val payments: List<PaymentDto>)

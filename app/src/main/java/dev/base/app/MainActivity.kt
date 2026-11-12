@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,9 +34,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun AppNavHost() {
     val navController = rememberNavController()
-    Scaffold { padding ->
-        NavHost(navController, startDestination = PaymentsDestination, modifier = Modifier.padding(padding)) {
-            composable<PaymentsDestination> { PaymentsRoute() }
-        }
+    // Sin Scaffold externo: cada pantalla maneja sus insets con su propio Scaffold.
+    NavHost(navController, startDestination = PaymentsDestination) {
+        composable<PaymentsDestination> { PaymentsRoute() }
     }
 }

@@ -8,17 +8,37 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 
 /**
- * Backend simulado. Si `random.nextDouble() < failureRate` responde HTTP 503; si no, 200 con [body].
- * Antes duerme `latencyMs` con [sleeper] (inyectable en tests).
+ * Backend simulado.
+ *
+ * GET `.../loans/payments`: duerme `latencyMs` con [sleeper]; si `random.nextDouble() < failureRate`
+ * responde HTTP 503; si no, 200 con [body] (o `server.paymentsJson()` si [body] es null).
+ *
+ * POST `.../loans/payments/{id}/pay`: duerme un valor de [payLatencyMs]; luego, con [random]:
+ * decline → 422 sin registrar · timeout → (registra si toca) y lanza `SocketTimeoutException`
+ * · si no → registra y 200 `{"paymentId":id,"status":"PAGADO"}`. Pago ya pagado → 200 PAGADO sin nuevo cargo.
  */
 class FakeBackendInterceptor(
     private val random: Random = Random.Default,
     private val latencyMs: Long = 1_500,
     private val failureRate: Double = 0.30,
-    private val body: String = SAMPLE_JSON,
-    private val sleeper: (Long) -> Unit = Thread::sleep
+    private val body: String? = null,
+    private val sleeper: (Long) -> Unit = Thread::sleep,
+    private val server: FakePaymentsServer = FakePaymentsServer(),
+    private val payLatencyMs: LongRange = 2_000L..5_000L,
+    private val payTimeoutRate: Double = 0.30,
+    private val registeredOnTimeoutRate: Double = 0.50,
+    private val payDeclineRate: Double = 0.0
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val segments = request.url.pathSegments
+        val isPay = request.method == "POST" && segments.lastOrNull() == "pay"
+        return if (isPay) pay(chain, segments[segments.size - 2]) else payments(chain)
+    }
+
+    private fun pay(chain: Interceptor.Chain, paymentId: String): Response = TODO()
+
+    private fun payments(chain: Interceptor.Chain): Response {
         sleeper(latencyMs)
         val fails = random.nextDouble() < failureRate
         val builder = Response.Builder()
@@ -30,7 +50,7 @@ class FakeBackendInterceptor(
                 .build()
         } else {
             builder.code(HTTP_OK).message("OK")
-                .body(body.toResponseBody(JSON))
+                .body((body ?: server.paymentsJson()).toResponseBody(JSON))
                 .build()
         }
     }

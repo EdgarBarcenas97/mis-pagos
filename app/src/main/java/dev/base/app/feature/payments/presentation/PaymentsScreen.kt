@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,6 +45,11 @@ object PaymentsTags {
     fun amount(id: String) = "payment_amount_$id"
     fun due(id: String) = "payment_due_$id"
     fun status(id: String) = "payment_status_$id"
+    fun payButton(id: String) = "pay_button_$id"
+    fun verifying(id: String) = "payment_verifying_$id"
+    fun verifyAgain(id: String) = "payment_verify_again_$id"
+    const val PAY_CONFIRM = "pay_confirm"
+    const val PAY_CANCEL = "pay_cancel"
 }
 
 /** Conecta el ViewModel con la pantalla. */
@@ -56,18 +62,35 @@ fun PaymentsRoute(viewModel: PaymentsViewModel = hiltViewModel()) {
 /** Sin estado: recibe datos y lambdas. Es lo que se testea y previsualiza. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentsScreen(state: PaymentsUiState, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+fun PaymentsScreen(
+    state: PaymentsUiState,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    payState: PayUiState = PayUiState(),
+    onPayClick: (Payment) -> Unit = {},
+    onConfirm: () -> Unit = {},
+    onCancel: () -> Unit = {},
+    onVerifyAgain: (String) -> Unit = {}
+) {
+    // TODO(pay_payment T4): botón Pagar, diálogo, Procesando, Verificando y chip tonal con payState y las lambdas.
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
                 title = {
                     Column {
-                        Text(stringResource(R.string.payments_title))
+                        Text(
+                            stringResource(R.string.payments_title),
+                            style = MaterialTheme.typography.titleLarge
+                        )
                         if (state is PaymentsUiState.Content) {
                             Text(
                                 stringResource(R.string.payments_loan, state.loanId),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
