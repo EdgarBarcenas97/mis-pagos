@@ -67,7 +67,7 @@ Resumen en [`DECISIONS.md`](DECISIONS.md); el stack completo y las alternativas 
 | 1 | Lista de pagos con monto, fecha límite y estado | ✅ | `feature/payments/presentation/PaymentsScreen.kt` |
 | 2 | Estados de UI: cargando, error con Reintentar, vacío y contenido | ✅ | `PaymentsViewModel` + `core/designsystem/StateViews.kt` |
 | 3 | Botón "Pagar" en pendientes y vencidos; **un pago nunca se duplica** | ✅ | `PayViewModel`, `PaymentGatewayImpl`, `FakePaymentsServer` |
-| 4 | *(Stretch)* Sin conexión: último dato bueno con "Actualizado hace X min" | ✅ (sin tests) | `CachingPaymentsRepository`, `LastUpdatedBanner` |
+| 4 | *(Stretch)* Sin conexión: último dato bueno con "Actualizado hace X min" | ✅ funciona, faltan tests | `CachingPaymentsRepository`, `LastUpdatedBanner` |
 
 **Cómo se evita el pago duplicado:**
 1. Se confirma con un diálogo antes de pagar.
@@ -85,6 +85,6 @@ Si hay timeout, el pago queda en **"Verificando tu pago…"**, se reintenta solo
 |---|---|---|
 | `payments_list`: lista y estados de UI | ✅ hecha | `specs/payments_list/` · demo `progress/evidence/payments_list/` |
 | `pay_payment`: pagar sin duplicar | ✅ hecha | `specs/pay_payment/` (R1–R15) |
-| `offline_last_known`: último dato bueno (stretch) | ✅ hecha, sin tests | `specs/offline_last_known/` |
+| `offline_last_known`: último dato bueno (stretch) | funciona; faltan sus tests (T3) | `specs/offline_last_known/` |
 | `splash`: splash con ícono y "Mis pagos" | ✅ hecha | `progress/impl_splash.md` |
 | `app_logo`: ícono de la app | ✅ hecha | `progress/impl_app_logo.md` |
