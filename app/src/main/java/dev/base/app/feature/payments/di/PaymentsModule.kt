@@ -6,11 +6,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.base.app.core.network.Network
+import dev.base.app.feature.payments.data.CachingPaymentsRepository
 import dev.base.app.feature.payments.data.FakeBackendInterceptor
 import dev.base.app.feature.payments.data.FakePaymentsServer
 import dev.base.app.feature.payments.data.PaymentGatewayImpl
 import dev.base.app.feature.payments.data.PaymentsApi
-import dev.base.app.feature.payments.data.PaymentsRepositoryImpl
 import dev.base.app.feature.payments.data.PrefsPendingPaymentStore
 import dev.base.app.feature.payments.domain.IdempotencyKeyFactory
 import dev.base.app.feature.payments.domain.PaymentGateway
@@ -30,7 +30,7 @@ private const val BASE_URL = "https://api.mispagos.fake/"
 @InstallIn(SingletonComponent::class)
 abstract class PaymentsModule {
     @Binds
-    abstract fun paymentsRepository(impl: PaymentsRepositoryImpl): PaymentsRepository
+    abstract fun paymentsRepository(impl: CachingPaymentsRepository): PaymentsRepository
 
     @Binds
     abstract fun paymentGateway(impl: PaymentGatewayImpl): PaymentGateway

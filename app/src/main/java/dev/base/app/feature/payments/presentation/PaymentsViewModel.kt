@@ -6,8 +6,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.base.app.core.common.AppError
 import dev.base.app.core.common.AppResult
 import dev.base.app.core.common.DispatcherProvider
+import dev.base.app.feature.payments.data.PaymentsCacheInfo
 import dev.base.app.feature.payments.domain.Payment
 import dev.base.app.feature.payments.domain.PaymentsRepository
+import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,12 @@ sealed interface PaymentsUiState {
 
     data object Empty : PaymentsUiState
 
-    data class Content(val loanId: String, val payments: List<Payment>) : PaymentsUiState
+    data class Content(
+        val loanId: String,
+        val payments: List<Payment>,
+        /** No null: sin conexión, se muestra el último dato bueno obtenido en este instante. */
+        val staleSince: Instant? = null
+    ) : PaymentsUiState
 
     data class Error(val error: AppError) : PaymentsUiState
 }
@@ -52,7 +59,9 @@ class PaymentsViewModel @Inject constructor(
                 is AppResult.Success -> if (result.data.payments.isEmpty()) {
                     PaymentsUiState.Empty
                 } else {
-                    PaymentsUiState.Content(result.data.loanId, result.data.payments)
+                    val cacheInfo = repository as? PaymentsCacheInfo
+                    val staleSince = if (cacheInfo?.isStale?.value == true) cacheInfo.lastSuccessAt.value else null
+                    PaymentsUiState.Content(result.data.loanId, result.data.payments, staleSince)
                 }
             }
         }
