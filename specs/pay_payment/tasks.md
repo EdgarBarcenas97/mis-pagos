@@ -1,5 +1,5 @@
 - [ ] T1 — `FakePaymentsServer` + rutas de pago en `FakeBackendInterceptor` (latencia, timeout que registra, idempotencia). Cubre: R11.
-- [ ] T2 — `PaymentsApi.pay`, `PaymentGatewayImpl` y DI. Cubre: R6, R9 (mapeo de resultados).
-- [ ] T3 — `PayViewModel`: confirmación, llave, bloqueo, verificación con reintentos, conciliación con la lista. Cubre: R2, R3, R4, R5, R6, R7, R8, R9, R10.
+- [ ] T2 — `PaymentsApi.pay`, `PaymentGatewayImpl`, `PrefsPendingPaymentStore` y DI. Cubre: R6, R9 (mapeo de resultados).
+- [ ] T3 — `PayViewModel`: confirmación, llave, bloqueo, verificación con reintentos, conciliación con la lista, llave persistida y reanudación. Cubre: R2, R3, R4, R5, R6, R7, R8, R9, R10, R14, R15.
 - [ ] T4 — UI: botón, diálogo, Procesando, Verificando, snackbar, chip tonal + color `success`. Cubre: R1, R2, R5, R6, R8, R13.
 - [ ] T5 — Test de integración de punta a punta con el servidor simulado. Cubre: R12.

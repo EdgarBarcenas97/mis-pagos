@@ -14,6 +14,8 @@
 
 - 2026-11-11 · `payments_list` cerrada (demo aprobada; chips → pay_payment). El humano pide un logo de la app: `app_logo` (sdd: false).
 
+- 2026-11-12 · Spec `pay_payment` aprobada (ronda 1). D1 same-key, D2 3x3s, D3 separate, D5 dialog (recomendadas); **D4 disk** (no recomendada: la llave se persiste en SharedPreferences → R14, R15).
+
 ## Bloqueos
 
 _—_

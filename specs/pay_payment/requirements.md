@@ -43,7 +43,12 @@ Con el servidor simulado real (timeout que sí registra en el primer intento y �
 ## R13
 El chip de estado DEBE ir relleno (tonal) como en el mockup, con "Pagado" en un verde propio del tema, y NO DEBE ser pulsable ni anunciarse como botón.
 
+## R14
+CUANDO el usuario confirma un pago, el sistema DEBE guardar en disco la llave de idempotencia **antes** de llamar al servidor, y borrarla solo cuando el resultado es definitivo (Pagado o Rechazado).
+
+## R15
+CUANDO la pantalla se crea y hay llaves guardadas de un pago anterior sin resolver (p. ej. la app se cerró a mitad del pago), el sistema DEBE poner esos pagos en Verificando y reintentar con **su misma** llave guardada (R7).
+
 ## Fuera de alcance
-- Persistir la llave tras matar el proceso (vive en el ViewModel).
 - Pagos parciales, elegir método de pago y comprobantes.
 - Pagar sin conexión (feature `offline_last_known`).

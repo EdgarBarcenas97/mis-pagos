@@ -13,6 +13,7 @@ Toca `docs/design.md` → **Mis pagos**, *Estados de una fila al pagar* y el chi
 | `feature/payments/data/FakePaymentsServer.kt` | **nuevo**: estado del servidor simulado (pagos, llaves, cargos) |
 | `feature/payments/data/FakeBackendInterceptor.kt` | Enruta GET lista / POST pay hacia `FakePaymentsServer` |
 | `feature/payments/data/PaymentGatewayImpl.kt` | **nuevo**: `safeApiCall` → `PayResult` |
+| `feature/payments/data/PrefsPendingPaymentStore.kt` | **nuevo**: llaves pendientes en `SharedPreferences` (`commit()` síncrono) |
 | `feature/payments/di/PaymentsModule.kt` | Provee `FakePaymentsServer` (singleton), gateway y key factory |
 | `feature/payments/presentation/PayViewModel.kt` | **nuevo**: `PayUiState`, `PayState`, `PayViewModel` |
 | `feature/payments/presentation/PaymentsScreen.kt` | Botón, diálogo, Procesando, Verificando, snackbar, chip |
@@ -33,6 +34,12 @@ sealed interface PayResult {
 }
 interface PaymentGateway { suspend fun pay(paymentId: String, idempotencyKey: String): PayResult }
 fun interface IdempotencyKeyFactory { fun newKey(): String }   // impl: UUID.randomUUID().toString()
+/** Llaves de pagos sin resultado definitivo. Escritura síncrona: se guarda antes de llamar a pay. */
+interface PendingPaymentStore {
+    fun save(paymentId: String, idempotencyKey: String)
+    fun remove(paymentId: String)
+    fun all(): Map<String, String>   // paymentId → llave
+}
 
 // data
 interface PaymentsApi {
@@ -69,6 +76,7 @@ class FakeBackendInterceptor(
 //   · si no → registra y 200 {"paymentId":id,"status":"PAGADO"}. Pago ya pagado → 200 PAGADO sin nuevo cargo.
 
 class PaymentGatewayImpl @Inject constructor(private val api: PaymentsApi) : PaymentGateway
+class PrefsPendingPaymentStore @Inject constructor(@ApplicationContext context: Context) : PendingPaymentStore  // archivo "pending_payments"
 // safeApiCall: Success con status PAGADO → Paid · Server(code in 400..499) o NotFound → Declined · todo lo demás → Unknown.
 
 // presentation
@@ -87,8 +95,10 @@ data class PayUiState(
 class PayViewModel @Inject constructor(
     private val gateway: PaymentGateway,
     private val keyFactory: IdempotencyKeyFactory,
+    private val pendingStore: PendingPaymentStore,
     private val dispatchers: DispatcherProvider,
 ) : ViewModel() {
+    // init: por cada entrada de pendingStore.all() → Verifying y verificación con esa llave (R15).
     val uiState: StateFlow<PayUiState>
     fun onPayClick(payment: Payment)        // abre confirmación si es pagable y no hay pago en curso
     fun onCancel()
@@ -151,4 +161,6 @@ En revisión → surfaceVariant.
   una respuesta definitiva y es el patrón estándar (Stripe, Adyen).
 - **Extender `PaymentsRepository`/`PaymentsViewModel`:** rompe los tests congelados de
   `payments_list`. Un `PaymentGateway` y un `PayViewModel` aparte mantienen las features separadas.
+- **Llave solo en memoria:** más simple, pero si la app se cierra durante un timeout que sí cobró, el usuario podría volver a pagar con una llave nueva. El humano eligió persistirla (D4).
+- **DataStore:** API asíncrona y una dependencia más; para unas pocas llaves con escritura síncrona antes de la llamada, `SharedPreferences.commit()` es suficiente.
 - **Llave por intento** (nueva en cada reintento): es justo lo que causa cobros duplicados.
