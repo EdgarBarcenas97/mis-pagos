@@ -4,7 +4,7 @@
 
 - **Feature:** pay_payment
 - **Fase:** spec
-- **red_sha:** _—_ (payments_list: a1d9e5d)
+- **red_sha:** c20be81 (payments_list: a1d9e5d)
 
 ## Bitácora
 
