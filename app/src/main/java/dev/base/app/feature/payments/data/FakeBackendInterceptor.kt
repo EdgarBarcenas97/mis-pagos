@@ -1,5 +1,6 @@
 package dev.base.app.feature.payments.data
 
+import java.net.SocketTimeoutException
 import kotlin.random.Random
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -36,7 +37,29 @@ class FakeBackendInterceptor(
         return if (isPay) pay(chain, segments[segments.size - 2]) else payments(chain)
     }
 
-    private fun pay(chain: Interceptor.Chain, paymentId: String): Response = TODO()
+    private fun pay(chain: Interceptor.Chain, paymentId: String): Response {
+        sleeper(random.nextLong(payLatencyMs.first, payLatencyMs.last + 1))
+        val key = chain.request().header(IDEMPOTENCY_HEADER).orEmpty()
+        val builder = Response.Builder()
+            .request(chain.request())
+            .protocol(Protocol.HTTP_1_1)
+        if (random.nextDouble() < payDeclineRate) {
+            return builder.code(HTTP_UNPROCESSABLE).message("Unprocessable Entity")
+                .body("".toResponseBody(JSON))
+                .build()
+        }
+        if (random.nextDouble() < payTimeoutRate) {
+            if (random.nextDouble() < registeredOnTimeoutRate) server.registerPayment(paymentId, key)
+            throw SocketTimeoutException("timeout")
+        }
+        server.registerPayment(paymentId, key)
+        return paid(builder, paymentId)
+    }
+
+    private fun paid(builder: Response.Builder, paymentId: String): Response = builder
+        .code(HTTP_OK).message("OK")
+        .body("""{"paymentId":"$paymentId","status":"PAGADO"}""".toResponseBody(JSON))
+        .build()
 
     private fun payments(chain: Interceptor.Chain): Response {
         sleeper(latencyMs)
@@ -58,6 +81,8 @@ class FakeBackendInterceptor(
     companion object {
         private const val HTTP_OK = 200
         private const val HTTP_UNAVAILABLE = 503
+        private const val HTTP_UNPROCESSABLE = 422
+        private const val IDEMPOTENCY_HEADER = "Idempotency-Key"
         private val JSON = "application/json".toMediaType()
 
         /** JSON exacto del enunciado. */

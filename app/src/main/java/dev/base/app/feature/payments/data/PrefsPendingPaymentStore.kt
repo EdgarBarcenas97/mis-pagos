@@ -9,11 +9,16 @@ import javax.inject.Inject
 class PrefsPendingPaymentStore @Inject constructor(@ApplicationContext context: Context) : PendingPaymentStore {
     private val prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
 
-    override fun save(paymentId: String, idempotencyKey: String): Unit = TODO()
+    override fun save(paymentId: String, idempotencyKey: String) {
+        prefs.edit().putString(paymentId, idempotencyKey).commit()
+    }
 
-    override fun remove(paymentId: String): Unit = TODO()
+    override fun remove(paymentId: String) {
+        prefs.edit().remove(paymentId).commit()
+    }
 
-    override fun all(): Map<String, String> = TODO()
+    override fun all(): Map<String, String> =
+        prefs.all.mapNotNull { (k, v) -> (v as? String)?.let { k to it } }.toMap()
 
     private companion object {
         const val FILE_NAME = "pending_payments"
