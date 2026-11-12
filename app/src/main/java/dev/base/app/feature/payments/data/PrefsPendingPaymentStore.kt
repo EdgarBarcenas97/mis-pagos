@@ -17,8 +17,7 @@ class PrefsPendingPaymentStore @Inject constructor(@ApplicationContext context: 
         prefs.edit().remove(paymentId).commit()
     }
 
-    override fun all(): Map<String, String> =
-        prefs.all.mapNotNull { (k, v) -> (v as? String)?.let { k to it } }.toMap()
+    override fun all(): Map<String, String> = prefs.all.mapNotNull { (k, v) -> (v as? String)?.let { k to it } }.toMap()
 
     private companion object {
         const val FILE_NAME = "pending_payments"
