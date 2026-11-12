@@ -1,0 +1,2 @@
+- [x] T1 — Dependencia, tema de arranque e `installSplashScreen()`. Cubre: R1, R3.
+- [x] T2 — Ícono y branding "Mis pagos" (v31). Cubre: R1, R2.
