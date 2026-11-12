@@ -141,7 +141,14 @@ fun PaymentsScreen(
             is PaymentsUiState.Content -> Column(contentModifier) {
                 // offline_last_known: banner sobre la lista; con staleSince != null, Pagar debe ir desactivado.
                 state.staleSince?.let { LastUpdatedBanner(it) }
-                PaymentsList(state.payments, payState.payStates, onPayClick, onVerifyAgain, payEnabled = state.staleSince == null)
+                PaymentsList(
+                    state.payments,
+                    payState.payStates,
+                    onPayClick,
+                    onVerifyAgain,
+                    payEnabled =
+                    state.staleSince == null
+                )
             }
         }
     }

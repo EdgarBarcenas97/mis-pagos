@@ -32,7 +32,7 @@
         "El nombre de la app en el launcher es \"Mis pagos\" (hoy dice \"AppBase\")"
       ],
       "sdd": true,
-      "status": "in_progress"
+      "status": "done"
     },
     {
       "id": 3,
@@ -45,7 +45,7 @@
         "El reloj es inyectable para testear X min"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": 4,
