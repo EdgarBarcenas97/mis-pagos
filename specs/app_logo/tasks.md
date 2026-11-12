@@ -1,0 +1,2 @@
+- [x] T1 — Ícono adaptativo + capa monocroma + manifest. Cubre: R1, R2.
+- [x] T2 — `brand_green` compartido con el splash. Cubre: R3.

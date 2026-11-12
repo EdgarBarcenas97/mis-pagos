@@ -1,0 +1,199 @@
+{
+  "feature": "payments_list",
+  "title": "Lista de pagos con estados de UI",
+  "round": 1,
+  "status": "in_progress",
+  "branch": "feat/payments_list",
+  "commit": "(spec)",
+  "specPath": "specs/payments_list/",
+  "summary": "Pantalla Mis pagos: carga desde un backend simulado (~1.5 s, 30% de fallos), estados cargando/error con Reintentar/vacío/contenido, montos exactos en BigDecimal y fechas de calendario. El botón Pagar llega en pay_payment.",
+  "mockupUrl": "https://claude.ai/artifact/JdDrU7CGZ8uvQd6WTMFc5X",
+  "designChanges": [],
+  "decisions": [
+    {
+      "id": "D1",
+      "title": "Fuente de datos simulada",
+      "context": "No hay backend. Hay que simular latencia y fallos de forma testeable.",
+      "options": [
+        {
+          "id": "fake",
+          "label": "Fake en código con Random y latencia inyectables",
+          "detail": "Rápido, determinista en tests con tiempo virtual; el repositorio aísla el cambio a red real.",
+          "recommended": true
+        },
+        {
+          "id": "mockweb",
+          "label": "Retrofit + MockWebServer",
+          "detail": "Más realista (HTTP, códigos), pero cuesta 10+ min que no tenemos."
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "title": "Cómo se lee el monto",
+      "context": "El JSON trae 1250.10 como número.",
+      "options": [
+        {
+          "id": "text",
+          "label": "Texto del primitivo JSON → BigDecimal",
+          "detail": "Exacto, sin redondeo binario.",
+          "recommended": true
+        },
+        {
+          "id": "double",
+          "label": "Double → BigDecimal",
+          "detail": "Más simple, pero 1250.10 no es exacto en Double."
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "title": "Fecha límite",
+      "context": "El PO dijo que da igual. 2026-11-30T00:00:00Z en CDMX es 29 nov.",
+      "options": [
+        {
+          "id": "utc",
+          "label": "Fecha de calendario en UTC (30 nov)",
+          "detail": "Coincide con el dato del backend y no adelanta el vencimiento.",
+          "recommended": true
+        },
+        {
+          "id": "local",
+          "label": "Zona del dispositivo (29 nov)",
+          "detail": "Literal, pero confuso para el cliente."
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "title": "Estado desconocido",
+      "context": "Si el backend agrega un estado nuevo.",
+      "options": [
+        {
+          "id": "unknown",
+          "label": "Mostrar 'En revisión' sin Pagar",
+          "detail": "La lista nunca se rompe por un estado nuevo.",
+          "recommended": true
+        },
+        {
+          "id": "fail",
+          "label": "Fallar el parseo completo",
+          "detail": "Más estricto, pero deja al cliente sin ver ningún pago."
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "title": "Plantilla home",
+      "context": "La plantilla trae una feature de ejemplo (tips con Room).",
+      "options": [
+        {
+          "id": "remove",
+          "label": "Eliminar feature/home y arrancar en Mis pagos",
+          "detail": "Menos código muerto que revisar.",
+          "recommended": true
+        },
+        {
+          "id": "keep",
+          "label": "Mantenerla",
+          "detail": "Sin riesgo, pero confunde en la revisión."
+        }
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "group": "Estados",
+      "text": "Al abrir, estado de carga"
+    },
+    {
+      "id": "R2",
+      "group": "Estados",
+      "text": "Si falla, error con Reintentar"
+    },
+    {
+      "id": "R3",
+      "group": "Estados",
+      "text": "Reintentar vuelve a cargar"
+    },
+    {
+      "id": "R4",
+      "group": "Estados",
+      "text": "Sin pagos, estado vacío"
+    },
+    {
+      "id": "R5",
+      "group": "Contenido",
+      "text": "Orden por fecha asc. y subtítulo Crédito CR-88213"
+    },
+    {
+      "id": "R6",
+      "group": "Dinero",
+      "text": "BigDecimal desde texto; $1,250.10 MXN"
+    },
+    {
+      "id": "R7",
+      "group": "Fechas",
+      "text": "Fecha UTC de calendario; Vence el 30 nov 2026"
+    },
+    {
+      "id": "R8",
+      "group": "Estados de pago",
+      "text": "4 estados con etiqueta; solo Pendiente y Vencido pagables"
+    },
+    {
+      "id": "R9",
+      "group": "Estados de pago",
+      "text": "Estado desconocido → En revisión, no rompe la lista"
+    },
+    {
+      "id": "R10",
+      "group": "Backend",
+      "text": "Fake ~1.5 s y 30% de fallos, inyectable"
+    }
+  ],
+  "tests": [
+    {
+      "id": "t1",
+      "type": "unit",
+      "what": "PaymentsViewModelTest: Loading → Content / Error / Empty, retry",
+      "covers": "R1,R2,R3,R4,R5"
+    },
+    {
+      "id": "t2",
+      "type": "unit",
+      "what": "PaymentsRepositoryImplTest (MockWebServer): 200 ordenado, 503 → Server, desconexión → Network, JSON inválido → Serialization",
+      "covers": "R2,R5"
+    },
+    {
+      "id": "t3",
+      "type": "unit",
+      "what": "PaymentsMapperTest + BigDecimalSerializer: BigDecimal exacto, fecha UTC con TZ CDMX, EN_PROCESO y desconocido",
+      "covers": "R6,R7,R8,R9"
+    },
+    {
+      "id": "t4",
+      "type": "unit",
+      "what": "FakeBackendInterceptorTest: espera 1500 ms, 503 con failureRate 1, 200 con el JSON con 0",
+      "covers": "R10"
+    },
+    {
+      "id": "t5",
+      "type": "unit",
+      "what": "PaymentsFormatTest: $1,250.10 MXN, Vence/Venció el …",
+      "covers": "R6,R7"
+    },
+    {
+      "id": "t6",
+      "type": "ui",
+      "what": "PaymentsScreenTest (androidTest, compila en verify): estados y tags",
+      "covers": "R2,R4,R5"
+    }
+  ],
+  "outOfScope": [
+    "Botón Pagar y su flujo (pay_payment)",
+    "Caché offline (offline_last_known)",
+    "Red real y tests de UI en CI"
+  ]
+}

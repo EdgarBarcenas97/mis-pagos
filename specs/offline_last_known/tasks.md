@@ -1,0 +1,3 @@
+- [x] T1 — Decorador con caché y reloj inyectable. Cubre: R1, R2, R4.
+- [x] T2 — `staleSince` en el ViewModel, banner y Pagar desactivado. Cubre: R1, R3.
+- [ ] T3 — Tests unitarios del decorador y del banner (pendiente por tiempo).

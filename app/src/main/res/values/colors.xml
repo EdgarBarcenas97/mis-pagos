@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Verde de marca: fondo del splash y del ícono de la app. -->
+    <color name="brand_green">#FF1F6F5C</color>
+</resources>

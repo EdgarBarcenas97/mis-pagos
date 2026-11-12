@@ -46,14 +46,15 @@ El JSON trae un estado fuera del enum pedido: `p4` = `EN_PROCESO`.
 - Recibos o comprobantes descargables, y notificaciones push.
 - Tests de UI instrumentados en CI (ver `docs/adr/0001-stack.md`).
 
-## Preguntas abiertas (para el PO): supuesto por defecto entre paréntesis
-1. **`EN_PROCESO`**: ¿cómo se muestra? *(Etiqueta "En proceso", sin botón Pagar.
-   Cualquier estado desconocido se muestra sin botón y nunca rompe la pantalla.)*
-2. **`VENCIDO`**: ¿también se puede pagar? *(Sí: se sigue debiendo.)*
-3. **Timeout en `pay`**: ¿qué ve el cliente? *(El pago queda "Verificando pago…",
-   se concilia con el servidor y nunca se reintenta con una llave nueva. El fake
-   acepta una llave de idempotencia por pago.)*
-4. **Fecha límite**: `2026-11-30T00:00:00Z` en hora de CDMX cae el 29. *(Se trata
-   como fecha de calendario: se muestra "30 nov 2026".)*
-5. **Orden de la lista** *(por fecha límite ascendente)*.
-6. **Pago parcial**: *(no, siempre el monto completo de la cuota)*.
+## Decisiones del PO (2026-11-11)
+1. **`EN_PROCESO`** se muestra como "En proceso", sin botón Pagar. Un estado desconocido
+   se muestra sin botón y nunca rompe la pantalla.
+2. **`VENCIDO`** se puede pagar.
+3. **Timeout en `pay`**: el pago queda en "Verificando tu pago…" hasta conciliar con el
+   servidor. El reintento usa la misma llave de idempotencia, nunca una nueva.
+4. **Fecha límite**: al PO le da igual; se muestra la fecha de calendario (30 nov 2026),
+   sin conversión de zona.
+5. **Orden**: por fecha límite ascendente.
+
+## Preguntas abiertas
+- **Pago parcial**: sin respuesta del PO. Supuesto: no, siempre el monto completo de la cuota.

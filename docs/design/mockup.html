@@ -1,0 +1,173 @@
+<title>Mis pagos · mockup v2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap">
+<style>
+/* Layout: one row per screen state; each row shows the phone in light and dark side by side. */
+:root{
+  /* page (follows the viewer's theme) */
+  --page:#eef2f0; --page-ink:#14211c; --page-muted:#55665f; --page-line:#d3ddd8; --tag-bg:#dfe9e4; --frame:#18201d;
+  --body:Roboto,system-ui,sans-serif; --mono:"Roboto Mono",ui-monospace,monospace;
+  /* app · light (brand) */
+  --l-bg:#f4f7f5; --l-bar:#e7efeb; --l-card:#dcebe4; --l-ink:#13201b; --l-muted:#4e5f58;
+  --l-primary:#1f6f5c; --l-on-primary:#ffffff;
+  --l-pend-bg:#ffffff; --l-pend:#1f6f5c; --l-venc-bg:#f9dcd8; --l-venc:#8c1d18;
+  --l-pag-bg:#1f6f5c; --l-pag:#ffffff; --l-proc-bg:#f3e6c6; --l-proc:#6b4a00;
+  --l-warn-bg:#f6ebcf; --l-warn:#5e4300; --l-banner-bg:#f6ebcf; --l-dialog:#ffffff; --l-scrim:rgba(8,20,16,.45);
+  --l-snack:#13201b; --l-on-snack:#e8f1ed; --l-snack-action:#8fd7bf; --l-status:#13201b;
+  /* app · dark (brand) */
+  --d-bg:#0d1513; --d-bar:#13201c; --d-card:#173029; --d-ink:#e3eee9; --d-muted:#9db3aa;
+  --d-primary:#7fd1b6; --d-on-primary:#00382b;
+  --d-pend-bg:#0d1513; --d-pend:#a8e3cf; --d-venc-bg:#4a1d1a; --d-venc:#ffb4ab;
+  --d-pag-bg:#7fd1b6; --d-pag:#00382b; --d-proc-bg:#3b3118; --d-proc:#f2cf83;
+  --d-warn-bg:#3b3118; --d-warn:#f2cf83; --d-banner-bg:#3b3118; --d-dialog:#1c2a25; --d-scrim:rgba(0,0,0,.6);
+  --d-snack:#e3eee9; --d-on-snack:#13201b; --d-snack-action:#1f6f5c; --d-status:#e3eee9;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0b100e; --page-ink:#e3eee9; --page-muted:#93a69e; --page-line:#24302b; --tag-bg:#1a2622; --frame:#000; color-scheme:dark}}
+:root[data-theme="dark"]{--page:#0b100e; --page-ink:#e3eee9; --page-muted:#93a69e; --page-line:#24302b; --tag-bg:#1a2622; --frame:#000; color-scheme:dark}
+
+body{background:var(--page);color:var(--page-ink);font-family:var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1120px;margin:0 auto}
+header.page{display:grid;gap:10px;margin-bottom:28px}
+header.page h1{font-size:1.9rem;font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.page p{margin:0;color:var(--page-muted);max-width:70ch;line-height:1.5}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.sw{display:flex;align-items:center;gap:6px;font:500 .75rem var(--mono);color:var(--page-muted);background:var(--tag-bg);border-radius:6px;padding:4px 8px 4px 4px}
+.sw i{width:16px;height:16px;border-radius:4px;display:block;border:1px solid var(--page-line)}
+.toggle{display:inline-flex;border:1px solid var(--page-line);border-radius:8px;overflow:hidden;margin-top:6px;width:max-content}
+.toggle button{font:500 .85rem var(--body);background:transparent;color:var(--page-muted);border:0;padding:7px 14px;cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--page-ink);color:var(--page)}
+.toggle button:focus-visible{outline:2px solid var(--l-primary);outline-offset:-2px}
+section.group{margin-top:36px}
+section.group h2{font-size:1.05rem;font-weight:600;margin:0 0 4px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+section.group h2 code{font:500 .75rem var(--mono);background:var(--tag-bg);color:var(--page-muted);padding:2px 8px;border-radius:6px}
+section.group .note{color:var(--page-muted);margin:0 0 14px;font-size:.9rem;line-height:1.45;max-width:80ch}
+.rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:28px 22px}
+figure{margin:0;display:grid;gap:10px;justify-items:center;align-content:start}
+figure .pair{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+figcaption{font-size:.83rem;color:var(--page-muted);text-align:center;line-height:1.4}
+figcaption b{color:var(--page-ink);font-weight:600;display:block}
+body.both .rows{grid-template-columns:repeat(auto-fill,minmax(490px,1fr))}
+@media (max-width:560px){body.both .rows{grid-template-columns:1fr}}
+
+/* phone */
+.phone{width:240px;max-width:100%;aspect-ratio:9/18.5;background:var(--frame);border-radius:32px;padding:8px;box-shadow:0 10px 26px rgba(0,0,0,.16)}
+.screen{position:relative;height:100%;border-radius:25px;overflow:hidden;display:flex;flex-direction:column;font-size:12px;background:var(--bg);color:var(--ink)}
+.screen.light{--bg:var(--l-bg);--bar:var(--l-bar);--card:var(--l-card);--ink:var(--l-ink);--muted:var(--l-muted);--primary:var(--l-primary);--on-primary:var(--l-on-primary);--pend-bg:var(--l-pend-bg);--pend:var(--l-pend);--venc-bg:var(--l-venc-bg);--venc:var(--l-venc);--pag-bg:var(--l-pag-bg);--pag:var(--l-pag);--proc-bg:var(--l-proc-bg);--proc:var(--l-proc);--warn-bg:var(--l-warn-bg);--warn:var(--l-warn);--banner-bg:var(--l-banner-bg);--dialog:var(--l-dialog);--scrim:var(--l-scrim);--snack:var(--l-snack);--on-snack:var(--l-on-snack);--snack-action:var(--l-snack-action);--status:var(--l-status)}
+.screen.dark{--bg:var(--d-bg);--bar:var(--d-bar);--card:var(--d-card);--ink:var(--d-ink);--muted:var(--d-muted);--primary:var(--d-primary);--on-primary:var(--d-on-primary);--pend-bg:var(--d-pend-bg);--pend:var(--d-pend);--venc-bg:var(--d-venc-bg);--venc:var(--d-venc);--pag-bg:var(--d-pag-bg);--pag:var(--d-pag);--proc-bg:var(--d-proc-bg);--proc:var(--d-proc);--warn-bg:var(--d-warn-bg);--warn:var(--d-warn);--banner-bg:var(--d-banner-bg);--dialog:var(--d-dialog);--scrim:var(--d-scrim);--snack:var(--d-snack);--on-snack:var(--d-on-snack);--snack-action:var(--d-snack-action);--status:var(--d-status)}
+.bar{background:var(--bar);padding:0 16px 12px}
+.status{height:24px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--status);font-variant-numeric:tabular-nums}
+.bar .t{font-size:19px;font-weight:500;margin-top:8px}
+.bar .s{font-size:11px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.list{flex:1;overflow:hidden;padding:12px 12px;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border-radius:14px;padding:12px 12px 12px 14px;display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:start}
+.amt{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.amt small{font-weight:500;font-size:10px;color:var(--muted);margin-left:3px;letter-spacing:.04em}
+.due{grid-column:1;font-size:11px;color:var(--muted)}
+.chip{grid-row:1;grid-column:2;justify-self:end;font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;letter-spacing:.01em}
+.c-pend{background:var(--pend-bg);color:var(--pend)} .c-venc{background:var(--venc-bg);color:var(--venc)}
+.c-pag{background:var(--pag-bg);color:var(--pag)} .c-proc{background:var(--proc-bg);color:var(--proc)}
+.act{grid-column:1/-1;display:flex;justify-content:flex-end;margin-top:8px}
+.btn{font:500 11px var(--body);border:0;border-radius:999px;padding:7px 18px;background:var(--primary);color:var(--on-primary);display:inline-flex;gap:6px;align-items:center}
+.btn.dis{opacity:.4}
+.btn.text{background:transparent;color:var(--primary);padding:7px 10px}
+.verif{grid-column:1/-1;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--warn-bg);color:var(--warn);font-size:10.5px;line-height:1.35}
+.verif b{display:block;font-size:11px;font-weight:600}
+.verif .again{display:flex;justify-content:flex-end;margin-top:4px}
+.verif .again span{font-weight:600;font-size:11px;padding:3px 4px}
+.spin{width:11px;height:11px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:r 1s linear infinite}
+.spin.big{width:30px;height:30px;border-width:3px;color:var(--primary)}
+@keyframes r{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-size:13px;line-height:1.45}
+.banner{margin:10px 12px 0;padding:7px 10px;border-radius:10px;background:var(--banner-bg);color:var(--warn);font-size:10.5px;font-weight:500}
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px}
+.dialog{background:var(--dialog);border-radius:24px;padding:18px;display:grid;gap:10px;width:100%}
+.dialog .h{font-size:16px;font-weight:500}
+.dialog p{margin:0;color:var(--muted);line-height:1.45}
+.dialog .row{display:flex;justify-content:flex-end;gap:4px;flex-wrap:wrap}
+.snack{position:absolute;left:12px;right:12px;bottom:14px;background:var(--snack);color:var(--on-snack);border-radius:8px;padding:11px 12px;font-size:11px;line-height:1.35}
+</style>
+
+<div class="wrap">
+<header class="page">
+  <h1>Mis pagos · pantallas v2</h1>
+  <p>La misma pantalla en claro y oscuro. Las tarjetas toman el verde de la marca (#1F6F5C); el estado "Pagado" es el único relleno sólido, porque es lo que el cliente busca confirmar. Datos del backend simulado, crédito CR-88213. Debajo de cada marco, la feature que lo cubre.</p>
+  <div class="swatches" aria-label="Paleta">
+    <span class="sw"><i style="background:#1f6f5c"></i>brand #1F6F5C</span>
+    <span class="sw"><i style="background:#dcebe4"></i>card claro #DCEBE4</span>
+    <span class="sw"><i style="background:#173029"></i>card oscuro #173029</span>
+    <span class="sw"><i style="background:#7fd1b6"></i>primary oscuro #7FD1B6</span>
+    <span class="sw"><i style="background:#f9dcd8"></i>vencido #F9DCD8</span>
+    <span class="sw"><i style="background:#f3e6c6"></i>en proceso #F3E6C6</span>
+  </div>
+  <div class="toggle" role="group" aria-label="Tema de la app">
+    <button type="button" id="t-both" data-mode="both" aria-pressed="true">Claro + oscuro</button>
+    <button type="button" id="t-light" data-mode="light" aria-pressed="false">Claro</button>
+    <button type="button" id="t-dark" data-mode="dark" aria-pressed="false">Oscuro</button>
+  </div>
+</header>
+
+<section class="group">
+  <h2>Estados de pantalla <code>payments_list</code></h2>
+  <p class="note">Orden por fecha límite ascendente. Header con fondo propio, justo bajo la barra de estado.</p>
+  <div class="rows" id="g1"></div>
+</section>
+<section class="group">
+  <h2>Pagar sin duplicar <code>pay_payment</code></h2>
+  <p class="note">Confirmación con monto y fecha, botón bloqueado mientras procesa, y tras un timeout "Verificando" con reintentos automáticos usando la misma llave. Nunca un "reintenta" que invite a pagar dos veces.</p>
+  <div class="rows" id="g2"></div>
+</section>
+<section class="group">
+  <h2>Sin conexión <code>offline_last_known</code> · stretch</h2>
+  <p class="note">Último dato bueno con su antigüedad. Pagar queda desactivado hasta recuperar conexión.</p>
+  <div class="rows" id="g3"></div>
+</section>
+</div>
+
+<script>
+const P=[
+ {id:"p3",amt:"1,250.10",due:"Venció el 30 sep 2026",st:"pag"},
+ {id:"p2",amt:"1,250.10",due:"Vence el 31 oct 2026",st:"venc"},
+ {id:"p1",amt:"1,250.10",due:"Vence el 30 nov 2026",st:"pend"},
+ {id:"p4",amt:"980.55",due:"Vence el 31 dic 2026",st:"proc"}];
+const L={pend:"Pendiente",venc:"Vencido",pag:"Pagado",proc:"En proceso"};
+function card(p,o={}){
+  const st=o.st||p.st, pay=(st==="pend"||st==="venc");
+  let act="";
+  if(o.verif) act=`<div class="verif"><b>Verificando tu pago…</b>No vuelvas a pagar; te avisaremos en cuanto se confirme.${o.again?`<div class="again"><span>Verificar de nuevo</span></div>`:""}</div>`;
+  else if(pay) act=`<div class="act">${o.busy?`<span class="btn dis"><span class="spin"></span>Procesando…</span>`:`<span class="btn${o.off?" dis":""}">Pagar</span>`}</div>`;
+  return `<div class="card"><div class="amt">$${p.amt}<small>MXN</small></div><span class="chip c-${st}">${L[st]}</span><div class="due">${p.due}</div>${act}</div>`;
+}
+const list=(o={})=>`<div class="list">${P.map(p=>card(p,o[p.id]||(o.all||{}))).join("")}</div>`;
+const bar=(sub=true)=>`<div class="bar"><div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="t">Mis pagos</div>${sub?`<div class="s">Crédito CR-88213</div>`:""}</div>`;
+const phone=(theme,body,extra="",sub=true)=>`<div class="phone"><div class="screen ${theme}">${bar(sub)}${body}${extra}</div></div>`;
+const S=[];
+const st=(group,cap,sub,body,extra="",showSub=true)=>S.push({group,cap,sub,body,extra,showSub});
+st("g1","Cargando","~1.5 s · state_loading",`<div class="center"><span class="spin big" aria-label="Cargando"></span></div>`,"",false);
+st("g1","Error","30% de las veces · state_error / state_retry",`<div class="center">No pudimos cargar tus pagos. Revisa tu conexión e inténtalo de nuevo.<span class="btn">Reintentar</span></div>`,"",false);
+st("g1","Vacío","state_empty",`<div class="center">Aún no tienes pagos programados para este crédito.</div>`);
+st("g1","Contenido","payments_list · En proceso sin botón",list());
+st("g2","Confirmar pago","pay_confirm / pay_cancel",list(),`<div class="scrim"><div class="dialog"><div class="h">Confirmar pago</div><p>Vas a pagar $1,250.10 MXN de la cuota que vence el 30 nov 2026.</p><div class="row"><span class="btn text">Cancelar</span><span class="btn">Pagar $1,250.10</span></div></div></div>`);
+st("g2","Procesando","2–5 s · botón bloqueado",list({p1:{busy:true}}));
+st("g2","Verificando","tras timeout · 3 reintentos cada 3 s, misma llave",list({p1:{verif:true}}));
+st("g2","Verificar de nuevo","reintentos agotados · payment_verify_again_p1",list({p1:{verif:true,again:true}}));
+st("g2","Pago registrado","chip Pagado + snackbar",list({p1:{st:"pag"}}),`<div class="snack">Pago registrado.</div>`);
+st("g2","Rechazado","4xx · el botón vuelve",list(),`<div class="snack">No se pudo procesar el pago y no se hizo ningún cargo.</div>`);
+st("g3","Último dato bueno","last_updated_banner",`<div class="banner">Sin conexión · Actualizado hace 12 min</div>`+list({all:{off:true}}));
+
+let mode="both";
+try{ const m=localStorage.getItem("mockup-mode"); if(m) mode=m; }catch(e){}
+function render(){
+  document.body.classList.toggle("both",mode==="both");
+  ["g1","g2","g3"].forEach(g=>{
+    document.getElementById(g).innerHTML=S.filter(s=>s.group===g).map(s=>{
+      const themes=mode==="both"?["light","dark"]:[mode];
+      return `<figure><div class="pair">${themes.map(t=>phone(t,s.body,s.extra,s.showSub)).join("")}</div><figcaption><b>${s.cap}</b>${s.sub}</figcaption></figure>`;
+    }).join("");
+  });
+  document.querySelectorAll(".toggle button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
+}
+document.querySelectorAll(".toggle button").forEach(b=>b.addEventListener("click",()=>{mode=b.dataset.mode;try{localStorage.setItem("mockup-mode",mode)}catch(e){}render();}));
+render();
+</script>

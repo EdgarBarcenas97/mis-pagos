@@ -15,7 +15,7 @@
         "Montos con BigDecimal; la fecha límite se muestra como fecha de calendario (30 nov 2026)"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": 2,
@@ -27,10 +27,12 @@
         "Doble tap o tap repetido mientras está en curso no genera un segundo cobro",
         "Tras un timeout, el reintento usa la misma llave de idempotencia y el servidor cobra una sola vez",
         "Tras un timeout, el pago queda en Verificando hasta conciliar; al confirmar pasa a PAGADO",
-        "Un test con el fake demuestra que el servidor registró exactamente un cobro"
+        "Un test con el fake demuestra que el servidor registró exactamente un cobro",
+        "Chips de estado según el mockup: relleno tonal, Pagado en verde y sin acción (deuda de la demo de payments_list)",
+        "El nombre de la app en el launcher es \"Mis pagos\" (hoy dice \"AppBase\")"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": 3,
@@ -43,7 +45,32 @@
         "El reloj es inyectable para testear X min"
       ],
       "sdd": true,
-      "status": "pending"
+      "status": "in_progress"
+    },
+    {
+      "id": 4,
+      "name": "splash",
+      "title": "Splash de arranque con ícono y texto \"Mis pagos\"",
+      "description": "Pedida por el humano a mitad de sesión; va en la rama feat/payments_list. SplashScreen API (androidx.core:core-splashscreen) con el ícono de la app sobre el color primario y el texto \"Mis pagos\" como branding image.",
+      "acceptance": [
+        "Al abrir la app se ve el splash con el ícono y el texto \"Mis pagos\"",
+        "Desaparece al dibujarse el primer frame, sin retraso artificial",
+        "verify.sh en verde"
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 5,
+      "name": "app_logo",
+      "title": "Logo de la app (ícono de launcher)",
+      "description": "Pedido por el humano. Ícono adaptativo del launcher basado en la tarjeta del splash.",
+      "acceptance": [
+        "La app muestra su logo en el launcher (ícono adaptativo, API 26+)",
+        "verify.sh en verde"
+      ],
+      "sdd": false,
+      "status": "done"
     }
   ]
 }
